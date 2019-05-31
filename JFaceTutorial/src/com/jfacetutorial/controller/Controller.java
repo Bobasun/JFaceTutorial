@@ -1,12 +1,12 @@
 package com.jfacetutorial.controller;
 
-import com.jfacetutorial.HelloJface;
+import com.jfacetutorial.View;
 import com.jfacetutorial.modellayer.IUserModel;
 
 public class Controller {
 
 	private IUserModel userModel;
-	private HelloJface view;
+	private View view;
 	
 	
 	public Controller() {

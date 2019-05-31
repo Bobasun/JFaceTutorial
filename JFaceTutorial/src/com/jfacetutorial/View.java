@@ -31,7 +31,9 @@ import org.eclipse.jface.viewers.Viewer;
 import swing2swt.layout.BoxLayout;
 
 
-public class HelloJface extends ApplicationWindow {
+public class View extends ApplicationWindow {
+	
+	
 	private static class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			return new Object[0];
@@ -41,15 +43,26 @@ public class HelloJface extends ApplicationWindow {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
+	
+	
 	private Table table;
 	private Text txtDfdf;
 	private Text text_1;
+	private Action action;
 
 	/**
 	 * Create the application window.
 	 */
-	public HelloJface() {
+	public View() {
 		super(null);
+		createActions();
+		addMenuBar();
+	}
+	private void createActions() {
+		{
+			action = new Action("Save") {
+			};
+		}
 	}
 
 
@@ -57,10 +70,47 @@ public class HelloJface extends ApplicationWindow {
 	protected MenuManager createMenuManager() {
 		MenuManager menuManager = new MenuManager();
 	      menuManager.add(createFileMenu());
+	      
+	      MenuManager menuManager_1 = createEditMenu();
+	      menuManager_1.setVisible(true);
+	      menuManager.add(menuManager_1);
+	      
+	      MenuManager menuManager_2 = createHelpMenu();
+	      menuManager_2.setVisible(true);
+	      menuManager.add(menuManager_2);
 	      return menuManager;
 	}
+	
+	private MenuManager createEditMenu() {
+		MenuManager menu = new MenuManager();
+		menu.setMenuText("Edit");
+		menu.add(new Action() {
+	         public String getText() {
+	            return "Edit";
+	         }
+	          
+	         public void run() {
+	            
+	         }
+	      });
+		return menu;
+	}
 
-
+	private MenuManager createHelpMenu() {
+		MenuManager menu = new MenuManager();
+		menu.setMenuText("Help");
+		menu.add(new Action() {
+	         public String getText() {
+	            return "About";
+	         }
+	          
+	         public void run() {
+	            
+	         }
+	      });
+		return menu;
+	}
+	
 	private MenuManager createFileMenu() {
 		 MenuManager menu = new MenuManager("&File", "Id01");
 		 
@@ -78,6 +128,7 @@ public class HelloJface extends ApplicationWindow {
 	            dialog.open();   // blocking call
 	         }
 	      });
+	      menu.add(action);
 	 
 	      menu.add(new Action() {
 	         public String getText() {
@@ -102,25 +153,13 @@ public class HelloJface extends ApplicationWindow {
 		Composite composite = new Composite(parent,SWT.NONE);
 		composite.setLayout(new BoxLayout(BoxLayout.X_AXIS));
 		
-		//Menu menuBar = new Menu(c.getShell(),SWT.BAR);
-//		composite.setMenu(menu);
-//		menu.setLocation(new Point(22, 220));
-//		composite.setMenu(menu);
 		
-//		MenuItem mntmNewSubmenu = new MenuItem(menuBar, SWT.CASCADE);
-//		mntmNewSubmenu.setText("New SubMenu");
-//		
-//		Menu menu_1 = new Menu(mntmNewSubmenu);
-//		mntmNewSubmenu.setMenu(menu_1);
-//		
-//		MenuItem mntmNewItem = new MenuItem(menuBar, SWT.PUSH);
-//		
-//		MenuItem mntmNewItem_1 = new MenuItem(menuBar, SWT.PUSH);
-//		mntmNewItem_1.setText("Exit");
 		
 		SashForm sashForm = new SashForm(composite, SWT.NONE);
+		sashForm.setTouchEnabled(true);
 		
 		TableViewer tableViewer = new TableViewer(sashForm, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer.setUseHashlookup(true);
 		table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -136,7 +175,6 @@ public class HelloJface extends ApplicationWindow {
 		TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
 		tblclmnNewColumn_1.setWidth(100);
 		tblclmnNewColumn_1.setText("SWT done");
-		tableViewer.setContentProvider(new ContentProvider());
 		
 		Composite composite_1 = new Composite(sashForm, SWT.NONE);
 		composite_1.setLayout(new FormLayout());
@@ -167,39 +205,39 @@ public class HelloJface extends ApplicationWindow {
 		btnSwtTaskDone.setText("SWT task done");
 		
 		Button btnNewButton = new Button(composite_1, SWT.NONE);
-		fd_btnSwtTaskDone.bottom = new FormAttachment(btnNewButton, -39);
 		FormData fd_btnNewButton = new FormData();
+		fd_btnNewButton.left = new FormAttachment(0, 10);
 		fd_btnNewButton.bottom = new FormAttachment(100, -24);
-		fd_btnNewButton.right = new FormAttachment(100, -253);
 		btnNewButton.setLayoutData(fd_btnNewButton);
-		btnNewButton.setText("New Button");
+		btnNewButton.setText("New");
 		
 		Button btnNewButton_1 = new Button(composite_1, SWT.NONE);
+		fd_btnNewButton.right = new FormAttachment(btnNewButton_1, -6);
+		fd_btnSwtTaskDone.bottom = new FormAttachment(btnNewButton_1, -39);
 		FormData fd_btnNewButton_1 = new FormData();
+		fd_btnNewButton_1.left = new FormAttachment(0, 91);
 		fd_btnNewButton_1.bottom = new FormAttachment(100, -24);
-		fd_btnNewButton_1.right = new FormAttachment(100, -172);
-		fd_btnNewButton_1.top = new FormAttachment(btnNewButton, 0, SWT.TOP);
-		fd_btnNewButton_1.left = new FormAttachment(btnNewButton, 6);
 		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
-		btnNewButton_1.setText("New Button");
+		btnNewButton_1.setText("Save");
 		
 		Button btnNewButton_2 = new Button(composite_1, SWT.NONE);
 		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.bottom = new FormAttachment(100, -24);
-		fd_btnNewButton_2.right = new FormAttachment(100, -10);
+		fd_btnNewButton_2.right = new FormAttachment(100);
 		fd_btnNewButton_2.top = new FormAttachment(btnNewButton, 0, SWT.TOP);
+		fd_btnNewButton_2.bottom = new FormAttachment(100, -24);
 		btnNewButton_2.setLayoutData(fd_btnNewButton_2);
-		btnNewButton_2.setText("New Button");
+		btnNewButton_2.setText("Delete");
 		
 		Button btnNewButton_3 = new Button(composite_1, SWT.NONE);
-		fd_btnNewButton_2.left = new FormAttachment(btnNewButton_3, 6);
+		fd_btnNewButton_1.right = new FormAttachment(btnNewButton_3, -6);
+		fd_btnNewButton_2.left = new FormAttachment(0, 246);
 		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.bottom = new FormAttachment(100, -24);
-		fd_btnNewButton_3.right = new FormAttachment(100, -91);
 		fd_btnNewButton_3.top = new FormAttachment(btnNewButton, 0, SWT.TOP);
-		fd_btnNewButton_3.left = new FormAttachment(btnNewButton_1, 6);
+		fd_btnNewButton_3.right = new FormAttachment(btnNewButton_2, -6);
+		fd_btnNewButton_3.bottom = new FormAttachment(100, -24);
+		fd_btnNewButton_3.left = new FormAttachment(0, 162);
 		btnNewButton_3.setLayoutData(fd_btnNewButton_3);
-		btnNewButton_3.setText("New Button");
+		btnNewButton_3.setText("Cancel");
 		
 		Label lblNewLabel = new Label(composite_1, SWT.NONE);
 		fd_text_1.left = new FormAttachment(lblNewLabel, 37);
@@ -219,16 +257,19 @@ public class HelloJface extends ApplicationWindow {
 		fd_lblNewLabel_1.right = new FormAttachment(txtDfdf, -2);
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Group");
-		sashForm.setWeights(new int[] {420, 340});
+		
+		tableViewer.setContentProvider(new ContentProvider());
+		sashForm.setWeights(new int[] {420, 420});
 	    return composite;
 	}
 
 	public static void main(String args[]) {
-			new HelloJface().run();
+			new View().run();
 	}
 
 
 	private void run() {
+//		MenuManager m = this.createMenuManager();
 		setBlockOnOpen(true);
 		open();
 		Display.getCurrent().dispose();
