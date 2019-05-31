@@ -21,6 +21,11 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import swing2swt.layout.BoxLayout;
@@ -49,29 +54,69 @@ public class HelloJface extends ApplicationWindow {
 
 
 	@Override
+	protected MenuManager createMenuManager() {
+		MenuManager menuManager = new MenuManager();
+	      menuManager.add(createFileMenu());
+	      return menuManager;
+	}
+
+
+	private MenuManager createFileMenu() {
+		 MenuManager menu = new MenuManager("&File", "Id01");
+		 
+	      menu.add(new Action() {
+	         public String getText() {
+	            return "&Open";
+	         }
+	          
+	         public void run() {
+	            String[] buttons = { IDialogConstants.OK_LABEL,
+	                                  IDialogConstants.CANCEL_LABEL };
+	            MessageDialog dialog = new MessageDialog(getShell(), "Title", null,
+	                                                     "File/Open selected!",
+	                                                     MessageDialog.INFORMATION, buttons, 0);
+	            dialog.open();   // blocking call
+	         }
+	      });
+	 
+	      menu.add(new Action() {
+	         public String getText() {
+	            return "E&xit";
+	         }
+	          
+	         public void run() {
+	            
+	         }
+	      });
+	        
+	      return menu;
+	}
+
+
+	@Override
 	protected Control createContents(Composite parent) {
 		
-		Composite c = new Composite(parent, SWT.NONE);
-		c.setLayout(new FillLayout());
+//		Composite c = new Composite(parent, SWT.NONE);
+//		c.setLayout(new FillLayout());
 		
-		Composite composite = new Composite(c,SWT.NONE);
+		Composite composite = new Composite(parent,SWT.NONE);
 		composite.setLayout(new BoxLayout(BoxLayout.X_AXIS));
 		
-		Menu menuBar = new Menu(c.getShell(),SWT.BAR);
+		//Menu menuBar = new Menu(c.getShell(),SWT.BAR);
 //		composite.setMenu(menu);
 //		menu.setLocation(new Point(22, 220));
 //		composite.setMenu(menu);
 		
-		MenuItem mntmNewSubmenu = new MenuItem(menuBar, SWT.CASCADE);
-		mntmNewSubmenu.setText("New SubMenu");
-		
-		Menu menu_1 = new Menu(mntmNewSubmenu);
-		mntmNewSubmenu.setMenu(menu_1);
-		
-		MenuItem mntmNewItem = new MenuItem(menuBar, SWT.PUSH);
-		
-		MenuItem mntmNewItem_1 = new MenuItem(menuBar, SWT.PUSH);
-		mntmNewItem_1.setText("Exit");
+//		MenuItem mntmNewSubmenu = new MenuItem(menuBar, SWT.CASCADE);
+//		mntmNewSubmenu.setText("New SubMenu");
+//		
+//		Menu menu_1 = new Menu(mntmNewSubmenu);
+//		mntmNewSubmenu.setMenu(menu_1);
+//		
+//		MenuItem mntmNewItem = new MenuItem(menuBar, SWT.PUSH);
+//		
+//		MenuItem mntmNewItem_1 = new MenuItem(menuBar, SWT.PUSH);
+//		mntmNewItem_1.setText("Exit");
 		
 		SashForm sashForm = new SashForm(composite, SWT.NONE);
 		
@@ -175,7 +220,7 @@ public class HelloJface extends ApplicationWindow {
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("Group");
 		sashForm.setWeights(new int[] {420, 340});
-	    return c;
+	    return composite;
 	}
 
 	public static void main(String args[]) {
