@@ -1,6 +1,5 @@
 package com.jfacetutorial.modellayer;
 
-import java.util.UUID;
 
 public class UserDataImpl implements UserData{
 
@@ -15,14 +14,6 @@ public class UserDataImpl implements UserData{
 		this.taskDone = taskDone;
 		this.id = GenerateUtils.generateId(name,group,taskDone);
 	}
-	
-//	private long generateId(String name, String group, boolean taskDone) { // util
-//		long result;
-//		result = this.name.hashCode() + this.group.hashCode() 
-//		+ String.valueOf(this.taskDone).hashCode();
-//		System.out.println(result);
-//		return result;
-//	}
 	
 	@Override
 	public int hashCode() {
