@@ -63,7 +63,7 @@ public class Controller {
 				view.getGroupInput().setText("");
 				view.getCheckButton().setSelection(false);
 				view.getGroupLabel().setText("Group *");
-				view.getNameLabel().setText("Name *s");
+				view.getNameLabel().setText("Name *");
 				view.setLocalUserData(null);
 			}
 		};
@@ -73,10 +73,21 @@ public class Controller {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				userService.delete(view.getLocalUserData().getId());
+				view.getTableViewer().setInput(userService.getAllUsers());
+			}
+		};
+	}
+	
+	public SelectionListener createCancelListener() {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				view.getNameInput().setText("");
 				view.getGroupInput().setText("");
-				view.getCheckButton().setSelection(false);	
+				view.getCheckButton().setSelection(false);
 			}
+			
 		};
 	}
 		

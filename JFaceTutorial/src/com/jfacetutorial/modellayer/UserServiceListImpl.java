@@ -30,7 +30,7 @@ public class UserServiceListImpl implements UserService{
 
 	@Override
 	public void delete(long id) {
-		users.remove(id);
+		users.remove((Long)id);
 	}
 
 	@Override

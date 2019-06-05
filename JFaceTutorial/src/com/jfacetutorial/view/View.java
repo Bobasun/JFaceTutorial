@@ -1,6 +1,5 @@
 package com.jfacetutorial.view;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -62,7 +61,7 @@ public class View {
 		
 		tableViewer.setContentProvider(new UserContentProvider());
 		tableViewer.addSelectionChangedListener(createTableViewListener());
-
+	
 		return mainComposite;
 	}
 	
@@ -128,7 +127,7 @@ public class View {
 		cancelButton.setText("Cancel");
 		
 		nameLabel = new Label(inputComposite, SWT.NONE);
-		fd_text_1.left = new FormAttachment(nameLabel, 50);
+		fd_text_1.left = new FormAttachment(nameLabel, 100);
 		nameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 		FormData fd_lblNewLabel = new FormData();
 		fd_lblNewLabel.right = new FormAttachment(100, -276);
@@ -185,7 +184,13 @@ public class View {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent arg0) {
-				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+				IStructuredSelection selection = (IStructuredSelection) arg0.getSelection();
+				if(selection.getFirstElement() == null) {
+					nameInput.setText("");
+					groupInput.setText("");
+					checkButton.setSelection(false);
+					return;
+				}
 				localUserData = (UserData) selection.getFirstElement();
 				nameInput.setText(localUserData.getName());
 				groupInput.setText(localUserData.getGroup());
@@ -226,7 +231,7 @@ public class View {
 	public TableViewer getTableViewer() {
 		return tableViewer;
 	}
-
+	
 	public UserData getLocalUserData() {
 		return localUserData;
 	}

@@ -154,7 +154,8 @@ public class App extends ApplicationWindow {
 
 		view.getSaveButton().addSelectionListener(controller.createSaveListener());
 		view.getNewButton().addSelectionListener(controller.createNewListener());
-		
+		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
+		view.getCancelButton().addSelectionListener(controller.createCancelListener());
 	    return composite;
 	}
 
