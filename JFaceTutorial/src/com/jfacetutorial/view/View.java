@@ -41,6 +41,9 @@ public class View {
 	private Label groupLabel;
 	private Label nameLabel;
 	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public View() {
 	}
 

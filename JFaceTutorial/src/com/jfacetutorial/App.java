@@ -5,7 +5,9 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -21,6 +23,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
@@ -32,19 +36,17 @@ import com.jfacetutorial.modellayer.UserData;
 import com.jfacetutorial.modellayer.UserServiceListImpl;
 import com.jfacetutorial.view.View;
 
+import java.io.DataOutputStream;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import swing2swt.layout.BoxLayout;
+
+
 
 
 public class App extends ApplicationWindow {
@@ -63,6 +65,23 @@ public class App extends ApplicationWindow {
 	private void createActions() {
 		{
 			action = new Action("Save") {
+				@Override
+				public void run() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+				dialog.setFilterPath("c:\\");
+				System.out.println("RESULT=" + dialog.open());
+				
+				
+//					DirectoryDialog dialog = new DirectoryDialog(getShell());
+//		            dialog.setFilterPath("c:\\");
+//		            System.out.println("RESULT=" + dialog.open());
+//		            
+//		            new FileUtils();
+//					FileUtils.writeFile(dialog.getText(), controller.getAllUsers());
+		            
+		            super.run();
+				}
+				
 			};
 		}
 	}
@@ -115,15 +134,12 @@ public class App extends ApplicationWindow {
 	
 	private MenuManager createFileMenu() {
 		 MenuManager menu = new MenuManager("&File", "Id01");
-		 System.out.println("sssda");
-	      menu.add(new Action() {
-	         public String getText() {
-	            return "&Open";
-	         }
-	          
+	      menu.add(new Action("Open") {
+	    	  
 	         public void run() {
 	            String[] buttons = { IDialogConstants.OK_LABEL,
 	                                  IDialogConstants.CANCEL_LABEL };
+	            
 	            MessageDialog dialog = new MessageDialog(getShell(), "Title", null,
 	                                                     "File/Open selected!",
 	                                                     MessageDialog.INFORMATION, buttons, 0);
@@ -134,11 +150,11 @@ public class App extends ApplicationWindow {
 	 
 	      menu.add(new Action() {
 	         public String getText() {
-	            return "E&xit";
+	            return "Exit";
 	         }
 	          
 	         public void run() {
-	            
+	            getShell().dispose();
 	         }
 	      });
 	        
@@ -151,14 +167,16 @@ public class App extends ApplicationWindow {
 		view = new View();
 		Composite composite = view.createWidgets(parent);
 		controller = new Controller(view);
-
-		view.getSaveButton().addSelectionListener(controller.createSaveListener());
-		view.getNewButton().addSelectionListener(controller.createNewListener());
-		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
-		view.getCancelButton().addSelectionListener(controller.createCancelListener());
+		createButtonsListeners();
 	    return composite;
 	}
 
+	private void createButtonsListeners() {
+		view.getSaveButton().addSelectionListener(controller.createSaveListener());
+		view.getNewButton().addSelectionListener(controller.createNewListener());
+		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
+		view.getCancelButton().addSelectionListener(controller.createCancelListener());		
+	}
 	public void run() {
 		
 		setBlockOnOpen(true);
