@@ -1,5 +1,10 @@
 package com.jfacetutorial.view;
 
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -8,6 +13,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -40,6 +47,8 @@ public class View {
 	private UserData localUserData;
 	private Label groupLabel;
 	private Label nameLabel;
+	public Consumer<UserData> saveConsumer; 
+	public Supplier<Map<Long,UserData>> userSupplier;
 	
 	/**
 	 * @wbp.parser.entryPoint
@@ -51,105 +60,155 @@ public class View {
 		Composite mainComposite = new Composite(parent,SWT.NONE);
 		mainComposite.setLayout(new FillLayout());
 		
-		SashForm sashForm = new SashForm(mainComposite, SWT.NONE);
-		sashForm.setTouchEnabled(true);
 		
-		tableViewer = new TableViewer(sashForm, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer.setUseHashlookup(true);
-		createTablecolumns(tableViewer);
+		SashForm sashForm = createSashForm(mainComposite);
+		tableViewer = createTableViewer(sashForm);
+		
+//		new mytable
+//		 new TopMen () 
+//		 new Table(sashForm);
+//		 new Editor(sashForm, new ButtomPanale());
+//		tableViewer = new TableViewer(sashForm, SWT.MULTI | SWT.H_SCROLL
+//	            | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+//		tableViewer.setUseHashlookup(true);
+//		createTablecolumns(tableViewer);
+//		tableViewer.getTable().setHeaderVisible(true);
+//		tableViewer.getTable().setLinesVisible(true);
 		
 		Composite inputComposite = new Composite(sashForm, SWT.NONE);
 		inputComposite.setLayout(new FormLayout());
-		createInputComponents(inputComposite);
 		
-		tableViewer.setContentProvider(new UserContentProvider());
-		tableViewer.addSelectionChangedListener(createTableViewListener());
+		createInputComponents(inputComposite);
+		createListeners();
+//		tableViewer.setContentProvider(new UserContentProvider());
+//		tableViewer.addSelectionChangedListener(createTableViewListener());
 	
 		return mainComposite;
 	}
 	
+	private void createListeners() {
+		getSaveButton().addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
+						  getCheckButton().getSelection()));
+				getTableViewer().setInput(userSupplier.get());
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	}
+
+	private TableViewer createTableViewer(SashForm sashForm) {
+		// TODO Auto-generated method stub
+		TableViewer tableViewer = new TableViewer(sashForm, SWT.MULTI | SWT.H_SCROLL
+	            | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		tableViewer.setUseHashlookup(true);
+		tableViewer.getTable().setHeaderVisible(true);
+		tableViewer.getTable().setLinesVisible(true);
+		createTablecolumns(tableViewer);
+		tableViewer.setContentProvider(new UserContentProvider());
+		tableViewer.addSelectionChangedListener(createTableViewListener());
+		
+		return tableViewer;
+	}
+
+	private SashForm createSashForm(Composite mainComposite) {
+		// TODO Auto-generated method stub
+		SashForm sashForm =new SashForm(mainComposite, SWT.NONE);
+		sashForm.setTouchEnabled(true);
+		return sashForm;
+	}
+
 	private void createInputComponents(Composite inputComposite) {
 		nameInput = new Text(inputComposite, SWT.BORDER);
-		FormData fd_text_1 = new FormData();
-		fd_text_1.right = new FormAttachment(100, -33);
-		fd_text_1.top = new FormAttachment(0, 34);
-		fd_text_1.bottom = new FormAttachment(0, 55);
-		nameInput.setLayoutData(fd_text_1);
+		FormData formNameInput = new FormData();
+		formNameInput.right = new FormAttachment(100, -33);
+		formNameInput.top = new FormAttachment(0, 34);
+		formNameInput.bottom = new FormAttachment(0, 55);
+		nameInput.setLayoutData(formNameInput);
 		
 		groupInput = new Text(inputComposite, SWT.BORDER);
-		FormData fd_txtDfdf = new FormData();
-		fd_txtDfdf.top = new FormAttachment(nameInput, 18);
-		fd_txtDfdf.right = new FormAttachment(nameInput, 0, SWT.RIGHT);
-		fd_txtDfdf.left = new FormAttachment(nameInput, 0, SWT.LEFT);
-		groupInput.setLayoutData(fd_txtDfdf);
+		FormData formGroupInput = new FormData();
+		formGroupInput.top = new FormAttachment(nameInput, 18);
+		formGroupInput.right = new FormAttachment(nameInput, 0, SWT.RIGHT);
+		formGroupInput.left = new FormAttachment(nameInput, 0, SWT.LEFT);
+		groupInput.setLayoutData(formGroupInput);
 		groupInput.setText("dfdf");
 		
 		checkButton = new Button(inputComposite, SWT.CHECK | SWT.CENTER);
-		fd_txtDfdf.bottom = new FormAttachment(checkButton, -58);
+		formGroupInput.bottom = new FormAttachment(checkButton, -58);
 		checkButton.setAlignment(SWT.LEFT);
-		FormData fd_btnSwtTaskDone = new FormData();
-		fd_btnSwtTaskDone.top = new FormAttachment(0, 152);
-		fd_btnSwtTaskDone.right = new FormAttachment(100, -52);
-		fd_btnSwtTaskDone.left = new FormAttachment(0, 91);
-		checkButton.setLayoutData(fd_btnSwtTaskDone);
+		FormData formCheckButton = new FormData();
+		formCheckButton.top = new FormAttachment(0, 152);
+		formCheckButton.right = new FormAttachment(100, -52);
+		formCheckButton.left = new FormAttachment(0, 91);
+		checkButton.setLayoutData(formCheckButton);
 		checkButton.setText("SWT task done");
 		
 		newButton = new Button(inputComposite, SWT.NONE);
-		FormData fd_btnNewButton = new FormData();
-		fd_btnNewButton.left = new FormAttachment(0, 10);
-		fd_btnNewButton.bottom = new FormAttachment(100, -24);
-		newButton.setLayoutData(fd_btnNewButton);
+		FormData formNewButton = new FormData();
+		formNewButton.left = new FormAttachment(0, 10);
+		formNewButton.bottom = new FormAttachment(100, -24);
+		newButton.setLayoutData(formNewButton);
 		newButton.setText("New");
 		
 		saveButton = new Button(inputComposite, SWT.NONE);
-		fd_btnNewButton.right = new FormAttachment(saveButton, -6);
-		fd_btnSwtTaskDone.bottom = new FormAttachment(saveButton, -39);
-		FormData fd_btnNewButton_1 = new FormData();
-		fd_btnNewButton_1.left = new FormAttachment(0, 91);
-		fd_btnNewButton_1.bottom = new FormAttachment(100, -24);
-		saveButton.setLayoutData(fd_btnNewButton_1);
+		formNewButton.right = new FormAttachment(saveButton, -6);
+		formCheckButton.bottom = new FormAttachment(saveButton, -39);
+		FormData formSaveButton = new FormData();
+		formSaveButton.left = new FormAttachment(0, 91);
+		formSaveButton.bottom = new FormAttachment(100, -24);
+		saveButton.setLayoutData(formSaveButton);
 		saveButton.setText("Save");
 		
 		deleteButton = new Button(inputComposite, SWT.NONE);
-		FormData fd_btnNewButton_2 = new FormData();
-		fd_btnNewButton_2.right = new FormAttachment(100);
-		fd_btnNewButton_2.top = new FormAttachment(newButton, 0, SWT.TOP);
-		fd_btnNewButton_2.bottom = new FormAttachment(100, -24);
-		deleteButton.setLayoutData(fd_btnNewButton_2);
+		FormData formDeleteButton = new FormData();
+		formDeleteButton.right = new FormAttachment(100);
+		formDeleteButton.top = new FormAttachment(newButton, 0, SWT.TOP);
+		formDeleteButton.bottom = new FormAttachment(100, -24);
+		deleteButton.setLayoutData(formDeleteButton);
 		deleteButton.setText("Delete");
 		
 		cancelButton = new Button(inputComposite, SWT.NONE);
-		fd_btnNewButton_1.right = new FormAttachment(cancelButton, -6);
-		fd_btnNewButton_2.left = new FormAttachment(0, 246);
-		FormData fd_btnNewButton_3 = new FormData();
-		fd_btnNewButton_3.top = new FormAttachment(newButton, 0, SWT.TOP);
-		fd_btnNewButton_3.right = new FormAttachment(deleteButton, -6);
-		fd_btnNewButton_3.bottom = new FormAttachment(100, -24);
-		fd_btnNewButton_3.left = new FormAttachment(0, 162);
-		cancelButton.setLayoutData(fd_btnNewButton_3);
+		formSaveButton.right = new FormAttachment(cancelButton, -6);
+		formDeleteButton.left = new FormAttachment(0, 246);
+		FormData formCancelButton = new FormData();
+		formCancelButton.top = new FormAttachment(newButton, 0, SWT.TOP);
+		formCancelButton.right = new FormAttachment(deleteButton, -6);
+		formCancelButton.bottom = new FormAttachment(100, -24);
+		formCancelButton.left = new FormAttachment(0, 162);
+		cancelButton.setLayoutData(formCancelButton);
 		cancelButton.setText("Cancel");
 		
 		nameLabel = new Label(inputComposite, SWT.NONE);
-		fd_text_1.left = new FormAttachment(nameLabel, 100);
+		formNameInput.left = new FormAttachment(nameLabel, 50);
 		nameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		FormData fd_lblNewLabel = new FormData();
-		fd_lblNewLabel.right = new FormAttachment(100, -276);
-		fd_lblNewLabel.top = new FormAttachment(nameInput, -2, SWT.TOP);
-		nameLabel.setLayoutData(fd_lblNewLabel);
-		nameLabel.setText("Name");
+		FormData formNameLabel = new FormData();
+		formNameLabel.right = new FormAttachment(100, -276);
+		formNameLabel.top = new FormAttachment(nameInput, -2, SWT.TOP);
+		nameLabel.setLayoutData(formNameLabel);
+		nameLabel.setText("Name   ");
 		
 		groupLabel = new Label(inputComposite, SWT.NONE);
 		groupLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		FormData fd_lblNewLabel_1 = new FormData();
-		fd_lblNewLabel_1.bottom = new FormAttachment(groupInput, 0, SWT.BOTTOM);
-		fd_lblNewLabel_1.top = new FormAttachment(nameLabel, 20);
-		fd_lblNewLabel_1.left = new FormAttachment(nameLabel, 0, SWT.LEFT);
-		fd_lblNewLabel_1.right = new FormAttachment(groupInput, -2);
-		groupLabel.setLayoutData(fd_lblNewLabel_1);
+		FormData formGroupLabel = new FormData();
+		formGroupLabel.bottom = new FormAttachment(groupInput, 0, SWT.BOTTOM);
+		formGroupLabel.top = new FormAttachment(nameLabel, 20);
+		formGroupLabel.left = new FormAttachment(nameLabel, 0, SWT.LEFT);
+		formGroupLabel.right = new FormAttachment(groupInput, -2);
+		groupLabel.setLayoutData(formGroupLabel);
 		groupLabel.setText("Group");		
 	}
 
-	private void createTablecolumns(TableViewer tableViewer2) {
+	private void createTablecolumns(TableViewer tableViewer) {
 		TableViewerColumn nameColuumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		nameColuumn.getColumn().setWidth(100);
 		nameColuumn.getColumn().setText("Name");
@@ -178,7 +237,7 @@ public class View {
 		
 		TableViewerColumn checkColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		checkColumn.getColumn().setWidth(50);
-		checkColumn.getColumn().setText("Group");
+		checkColumn.getColumn().setText("SWT");
 		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());		
 	}
 
@@ -249,6 +308,16 @@ public class View {
 
 	public Label getNameLabel() {
 		return nameLabel;
+	}
+
+	public void addSaveAction(Consumer<UserData> consumer) {
+		// TODO Auto-generated method stub
+			this.saveConsumer = consumer;
+	}
+
+	public void addAllUser(Supplier<Map <Long,UserData>> supplier) {
+		// TODO Auto-generated method stub
+		this.userSupplier = supplier;
 	}
 	
 	

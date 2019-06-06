@@ -30,13 +30,30 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.wb.swt.SWTResourceManager;
+//import org.json.simple.JSONObject;
+//import org.json.simple.JSONValue;
+//import org.json.simple.parser.JSONParser;
+//import org.json.simple.parser.ParseException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.databind.util.JSONWrappedObject;
 import com.jfacetutorial.controller.Controller;
+import com.jfacetutorial.modellayer.TempUsers;
 import com.jfacetutorial.modellayer.UserData;
+import com.jfacetutorial.modellayer.UserDataImpl;
 import com.jfacetutorial.modellayer.UserServiceListImpl;
 import com.jfacetutorial.view.View;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -60,7 +77,20 @@ public class App extends ApplicationWindow {
 		super(null);
 		createActions();
 		addMenuBar();
+	}
 	
+	private void writeFile(String path) {
+		ObjectMapper mapper = new ObjectMapper();
+		System.out.println(controller.getAllUsers());
+		try {
+			FileWriter file = new FileWriter(path);
+			mapper.writeValue(file, controller.getAllUsers());
+			
+			String jsonInString = mapper.writeValueAsString(controller.getAllUsers());
+			System.out.println(jsonInString);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	private void createActions() {
 		{
@@ -69,81 +99,43 @@ public class App extends ApplicationWindow {
 				public void run() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 				dialog.setFilterPath("c:\\");
-				System.out.println("RESULT=" + dialog.open());
-				
-				
-//					DirectoryDialog dialog = new DirectoryDialog(getShell());
-//		            dialog.setFilterPath("c:\\");
-//		            System.out.println("RESULT=" + dialog.open());
-//		            
-//		            new FileUtils();
-//					FileUtils.writeFile(dialog.getText(), controller.getAllUsers());
-		            
-		            super.run();
+				String[] ext = new String[] {".json"};
+	        	dialog.setFilterExtensions(ext);
+				dialog.setFileName("*" + ".json");
+				String path = dialog.open();
+					if(path!=null) {
+						writeFile(path);
+					}
 				}
 				
 			};
 		}
 	}
-
-
-	@Override
-	protected MenuManager createMenuManager() {
-		MenuManager menuManager = new MenuManager();
-	      menuManager.add(createFileMenu());
-	      
-	      MenuManager menuManager_1 = createEditMenu();
-	      menuManager_1.setVisible(true);
-	      menuManager.add(menuManager_1);
-	      
-	      MenuManager menuManager_2 = createHelpMenu();
-	      menuManager_2.setVisible(true);
-	      menuManager.add(menuManager_2);
-	      return menuManager;
-	}
 	
-	private MenuManager createEditMenu() {
-		MenuManager menu = new MenuManager();
-		menu.setMenuText("Edit");
-		menu.add(new Action() {
-	         public String getText() {
-	            return "Edit";
-	         }
-	          
-	         public void run() {
-	            
-	         }
-	      });
-		return menu;
-	}
-
-	private MenuManager createHelpMenu() {
-		MenuManager menu = new MenuManager();
-		menu.setMenuText("Help");
-		menu.add(new Action() {
-	         public String getText() {
-	            return "About";
-	         }
-	          
-	         public void run() {
-	            
-	         }
-	      });
-		return menu;
-	}
+	private void readFile(String path) {
+		 ObjectMapper mapper = new ObjectMapper();
+			 try (FileReader file = new FileReader(path)) {
+				 TempUsers temp = mapper.readValue(file, TempUsers.class);
+				 controller.setAllUsers(temp.getMap());
+				 view.getTableViewer().setInput(controller.getAllUsers());
+			 } catch (FileNotFoundException e) {
+				 e.printStackTrace();
+			 } catch (IOException e) {
+				 e.printStackTrace();
+			 }				
+			}
 	
-	private MenuManager createFileMenu() {
+private MenuManager createFileMenu() {
 		 MenuManager menu = new MenuManager("&File", "Id01");
 	      menu.add(new Action("Open") {
 	    	  
 	         public void run() {
-	            String[] buttons = { IDialogConstants.OK_LABEL,
-	                                  IDialogConstants.CANCEL_LABEL };
-	            
-	            MessageDialog dialog = new MessageDialog(getShell(), "Title", null,
-	                                                     "File/Open selected!",
-	                                                     MessageDialog.INFORMATION, buttons, 0);
-	            dialog.open();   // blocking call
+	        	FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+	        	dialog.setFilterPath("c:\\");
+	   	        String path = dialog.open();
+	        	 		if(path!=null) {
+	        	 			readFile(path);
+	        	 		}
 	         }
 	      });
 	      menu.add(action);
@@ -162,9 +154,60 @@ public class App extends ApplicationWindow {
 	}
 
 	@Override
+	protected MenuManager createMenuManager() {
+		
+		//return new MyMenuManager();
+		MenuManager menuManager = new MenuManager();
+	      menuManager.add(createFileMenu());
+	      
+	      MenuManager menuManager_1 = createEditMenu();
+	      menuManager_1.setVisible(true);
+	      menuManager.add(menuManager_1);
+	      
+	      MenuManager menuManager_2 = createHelpMenu();
+	      menuManager_2.setVisible(true);
+	      menuManager.add(menuManager_2);
+	      return menuManager;
+	}
+	
+	private MenuManager createEditMenu() {
+		MenuManager menu = new MenuManager();
+		menu.setMenuText("Edit");
+		menu.add(new Action("Edit") {
+	         public void run() {
+	          
+	         }
+	      });
+		return menu;
+	}
+
+	private MenuManager createHelpMenu() {
+		MenuManager menu = new MenuManager();
+		menu.setMenuText("Help");
+		menu.add(new Action() {
+	         public String getText() {
+	            return "About";
+	         }
+	          
+	         public void run() {
+		            String[] buttons = { IDialogConstants.OK_LABEL };
+
+		            MessageDialog dialog = new MessageDialog(getShell(), "Help", null,
+                                    "Test application done by Volodymyr!",
+                                    MessageDialog.INFORMATION, buttons, 0);
+		            dialog.open();   
+	         }
+	      });
+		return menu;
+	}
+	
+	
+
+	@Override
 	protected Control createContents(Composite parent) {
 		
 		view = new View();
+		
 		Composite composite = view.createWidgets(parent);
 		controller = new Controller(view);
 		createButtonsListeners();
@@ -172,7 +215,26 @@ public class App extends ApplicationWindow {
 	}
 
 	private void createButtonsListeners() {
-		view.getSaveButton().addSelectionListener(controller.createSaveListener());
+		view.addAllUser(controller::getAllUsers);
+		view.addSaveAction(controller::save);
+		
+//	    //action.addSaveListener(controller.createSaveListener());
+//		view.getSaveButton().addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				view.saveConsumer.accept(new UserDataImpl(view.getNameInput().getText(),view.getGroupInput().getText(), 
+//						  view.getCheckButton().getSelection()));
+//				view.getTableViewer().setInput(controller.getAllUsers());
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
 		view.getNewButton().addSelectionListener(controller.createNewListener());
 		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
 		view.getCancelButton().addSelectionListener(controller.createCancelListener());		

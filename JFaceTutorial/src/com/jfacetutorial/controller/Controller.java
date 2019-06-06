@@ -1,8 +1,10 @@
 package com.jfacetutorial.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,10 +32,21 @@ public class Controller {
 			view.setLocalUserData(new UserDataImpl(name,group,check));
 			userService.addUser(view.getLocalUserData());
 		} else {
-				view.setLocalUserData(convertFromInput(name,group,check));
-				userService.update(view.getLocalUserData());
+			view.setLocalUserData(convertFromInput(name,group,check));
+			userService.update(view.getLocalUserData());
 		}
 	}
+	
+	public void save (UserData userData) {
+		if(view.getLocalUserData() == null) {
+			view.setLocalUserData(userData);
+			userService.addUser(view.getLocalUserData());
+		} else {
+			view.setLocalUserData(convertFromInput(userData.getName(),userData.getGroup(),userData.isTaskDone()));
+			userService.update(view.getLocalUserData());
+		}
+	}
+	
 	
 	private UserData convertFromInput(String name,String group, boolean task) {
 		UserData user = view.getLocalUserData();
@@ -48,11 +61,34 @@ public class Controller {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			  save(view.getNameInput().getText(),view.getGroupInput().getText(), 
-					  view.getCheckButton().getSelection());
-			  view.getTableViewer().setInput(userService.getAllUsers());
+				if(view.getNameInput().getText()!="" && view.getGroupInput().getText() != "") {
+					 save(view.getNameInput().getText(),view.getGroupInput().getText(), 
+							  view.getCheckButton().getSelection());
+					  deleteStar();
+				} else {
+					String[] button = { IDialogConstants.OK_LABEL };
+					MessageDialog message = new MessageDialog(e.widget.getDisplay().getActiveShell(), "Error", null, 
+							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
+					message.open();
+				}
+			 	view.getTableViewer().setInput(userService.getAllUsers());
 			}
+
+			
 		};
+	}
+	public void save() {
+		System.err.println("save");
+	}
+	
+	private void deleteStar() {
+		 view.getNameLabel().setText("Name");
+		 view.getGroupLabel().setText("Group");				
+	}
+	
+	private void setStar() {
+		view.getNameLabel().setText("Name *");
+		view.getGroupLabel().setText("Group *");	
 	}
 	
 	public SelectionListener createNewListener() {
@@ -62,8 +98,7 @@ public class Controller {
 				view.getNameInput().setText("");
 				view.getGroupInput().setText("");
 				view.getCheckButton().setSelection(false);
-				view.getGroupLabel().setText("Group *");
-				view.getNameLabel().setText("Name *");
+				setStar();
 				view.setLocalUserData(null);
 			}
 		};
@@ -74,6 +109,7 @@ public class Controller {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				userService.delete(view.getLocalUserData().getId());
+				setStar();
 				view.getTableViewer().setInput(userService.getAllUsers());
 			}
 		};
@@ -85,6 +121,7 @@ public class Controller {
 			public void widgetSelected(SelectionEvent e) {
 				view.getNameInput().setText("");
 				view.getGroupInput().setText("");
+				setStar();
 				view.getCheckButton().setSelection(false);
 			}
 			
@@ -97,5 +134,9 @@ public class Controller {
 
 	public void delete(long id) {
 		userService.delete(id);
+	}
+
+	public void setAllUsers(Map<Long, UserData> map) {
+		userService.setAllUsers(map);
 	}
 }

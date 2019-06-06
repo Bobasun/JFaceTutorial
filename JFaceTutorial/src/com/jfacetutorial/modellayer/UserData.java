@@ -1,5 +1,8 @@
 package com.jfacetutorial.modellayer;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = UserDataImpl.class)
 public interface UserData {
 	
 	String getName();

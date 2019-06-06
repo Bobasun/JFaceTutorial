@@ -6,7 +6,6 @@ public class GenerateUtils {
 		long result;
 		result = name.hashCode() + group.hashCode() 
 		+ String.valueOf(taskDone).hashCode();
-		System.out.println(result);
 		return result;
 	}
 }

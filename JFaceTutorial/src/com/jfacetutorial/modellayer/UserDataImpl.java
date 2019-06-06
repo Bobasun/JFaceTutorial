@@ -1,5 +1,6 @@
 package com.jfacetutorial.modellayer;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class UserDataImpl implements UserData{
 
@@ -13,6 +14,14 @@ public class UserDataImpl implements UserData{
 		this.group = group;
 		this.taskDone = taskDone;
 		this.id = GenerateUtils.generateId(name,group,taskDone);
+	}
+	
+	public UserDataImpl(String both) {
+		String[] users = both.split("and");
+		this.id = Long.parseLong(users[0].trim());
+		this.name = users[1].trim();
+		this.group = users[2].trim();
+		this.taskDone = Boolean.valueOf(users[3].trim());
 	}
 	
 	@Override
@@ -50,8 +59,10 @@ public class UserDataImpl implements UserData{
 	}
 
 	@Override
+	@JsonValue
 	public String toString() {
-		return "UserDataImpl [id=" + id + ", name=" + name + ", group=" + group + ", taskDone=" + taskDone + "]";
+		return id + " and " + name + " and " + group + " and " + taskDone;
+//		return "UserDataImpl [id=" + id + ", name=" + name + ", group=" + group + ", taskDone=" + taskDone + "]";
 	}
 
 	public UserDataImpl() {
