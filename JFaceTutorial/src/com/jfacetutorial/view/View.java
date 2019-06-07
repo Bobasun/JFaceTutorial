@@ -69,24 +69,17 @@ public class View {
 		mainComposite.setLayout(new FillLayout());
 		SashForm sashForm = createSashForm(mainComposite);
 		tableViewer = createTableViewer(sashForm);
-		
-//		new mytable
-//		 new TopMen () 
-//		 new Table(sashForm);
-//		 new Editor(sashForm, new ButtomPanale());	
 		createInputComposite(sashForm);
 		return mainComposite;
 	}
 	
 	private SashForm createSashForm(Composite mainComposite) {
-		// TODO Auto-generated method stub
 		SashForm sashForm = new SashForm(mainComposite, SWT.NONE);
 		sashForm.setTouchEnabled(true);
 		return sashForm;
 	}
 
 	private TableViewer createTableViewer(SashForm sashForm) {
-		// TODO Auto-generated method stub
 		TableViewer tableViewer = new TableViewer(sashForm, SWT.MULTI | SWT.H_SCROLL
 	            | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tableViewer.setUseHashlookup(true);
@@ -200,6 +193,93 @@ public class View {
 		createListeners();		
 	}
 
+//	public static void main(String[] args) {
+//		  Display display = new Display();
+//		    Shell shell = new Shell(display);
+//		    GridLayout layout = new GridLayout();
+//		    layout.numColumns = 4;
+//		    layout.makeColumnsEqualWidth = true;
+//		    shell.setLayout(layout);
+//
+//		    // Create the big button in the upper left
+//		    GridData data = new GridData(GridData.FILL_BOTH);
+//		    data.widthHint = 110;
+//		    
+//		  
+////		    
+////		    Button one = new Button(shell, SWT.PUSH);
+////		    one.setText("one");
+////		    one.setLayoutData(data);
+//
+//		    // Create a composite to hold the three buttons in the upper right
+////		    Composite composite = new Composite(shell, SWT.NONE);
+////		    data = new GridData(GridData.FILL_BOTH);
+////		    data.horizontalSpan = 2;
+////		    composite.setLayoutData(data);
+////		    layout = new GridLayout();
+////		    layout.numColumns = 1;
+////		    layout.marginHeight = 15;
+////		    composite.setLayout(layout);//////
+//
+//		    Composite compositeLabTex = new Composite(shell, SWT.NONE);
+////		    data = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+////		    compositeLabTex.setLayoutData(data);
+//		    layout = new GridLayout();
+//		    layout.numColumns = 2;
+//		    layout.marginHeight = 50;
+//		    compositeLabTex.setLayout(layout);//my
+//		    
+//		    Label nameLabel = new Label(compositeLabTex, SWT.NONE);//my
+//		    nameLabel.setText("sss");
+//		    
+//		    
+//		    
+//		    // Create button "two"
+////		    data = new GridData(GridData.FILL_BOTH);
+////		    Button two = new Button(composite, SWT.PUSH);
+////		    two.setText("two");
+////		    two.setLayoutData(data);
+//		    
+//		    
+//		    Text nameText = new Text(compositeLabTex, SWT.BORDER);//my
+//		    data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//		    nameText.setLayoutData(data);//my
+//		    
+//		    
+//		    // Create button "three"
+////		    data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+////		    Button three = new Button(composite, SWT.PUSH);
+////		    three.setText("three");
+////		    three.setLayoutData(data);
+////		    
+//		    
+//
+//		    // Create button "four"
+////		    data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+////		    Button four = new Button(composite, SWT.PUSH);
+////		    four.setText("four");
+////		    four.setLayoutData(data);
+//
+//		    // Create the long button across the bottom
+////		    data = new GridData();
+////		    data.horizontalAlignment = GridData.FILL;
+////		    data.grabExcessHorizontalSpace = true;
+////		    data.horizontalSpan = 3;
+////		    data.heightHint = 150;
+////		    Button five = new Button(shell, SWT.PUSH);
+////		    five.setText("five");
+////		    five.setLayoutData(data);
+//
+//		    shell.pack();
+//		    shell.open();
+//		    while (!shell.isDisposed()) {
+//		      if (!display.readAndDispatch()) {
+//		        display.sleep();
+//		      }
+//		    }
+//		    display.dispose();
+//	}
+	
 	private void createInputComponents(Composite inputComposite) {
 		    
 		nameInput = new Text(inputComposite, SWT.BORDER);
@@ -207,6 +287,7 @@ public class View {
 		formNameInput.right = new FormAttachment(100, -33);
 		formNameInput.top = new FormAttachment(0, 34);
 		formNameInput.bottom = new FormAttachment(0, 55);
+		nameInput.setText("Volodymyr");
 		nameInput.setLayoutData(formNameInput);
 		
 		groupInput = new Text(inputComposite, SWT.BORDER);
@@ -215,7 +296,7 @@ public class View {
 		formGroupInput.right = new FormAttachment(nameInput, 0, SWT.RIGHT);
 		formGroupInput.left = new FormAttachment(nameInput, 0, SWT.LEFT);
 		groupInput.setLayoutData(formGroupInput);
-		groupInput.setText("dfdf");
+		groupInput.setText("15");
 		
 		checkButton = new Button(inputComposite, SWT.CHECK | SWT.CENTER);
 		formGroupInput.bottom = new FormAttachment(checkButton, -58);

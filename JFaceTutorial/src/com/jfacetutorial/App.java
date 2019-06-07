@@ -5,6 +5,8 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import com.jfacetutorial.controller.Controller;
 import com.jfacetutorial.view.View;
 
@@ -26,13 +28,14 @@ public class App extends ApplicationWindow {
 
 	@Override
 	protected MenuManager createMenuManager() {
-		topMenu = new TopMenu(getShell());
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		topMenu = new TopMenu(shell);
 		return topMenu.createMenuManager();
 	}
 	
 	@Override
 	protected Control createContents(Composite parent) {
-		System.out.println("ss");
 		view = new View();
 		
 		Composite composite = view.createWidgets(parent);
@@ -48,8 +51,8 @@ public class App extends ApplicationWindow {
 		topMenu.addAllUser(controller::getAllUsers);
 		topMenu.setAllUser(controller::setAllUsers);
 		topMenu.addTableViewer(view::getTableViewer);
-
 	}
+	
 	public void run() {
 		
 		setBlockOnOpen(true);

@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,7 +30,6 @@ public class TopMenu extends MenuManager {
 		private Supplier<TableViewer> tableSupplier;
 
 		
-		
 	public TopMenu(Shell shell) {
 		this.shell = shell;
 	}
@@ -49,17 +49,31 @@ public class TopMenu extends MenuManager {
 	private Shell getShell() {
 		return this.shell;
 	}
-	
-	private void writeFile(String path) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			FileWriter file = new FileWriter(path);
-			mapper.writeValue(file, userSupplier.get());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		
+private MenuManager createFileMenu() {
+		 MenuManager menu = new MenuManager("File");
+		 menu.add(createOpenAction());
+		 menu.add(createSaveAction());
+		 menu.add(createExitAction());
+	     return menu;
 	}
-	
+
+	private Action createOpenAction() {
+		return new Action("Open") {
+  	  
+			public void run() {
+				System.out.println(getShell());
+				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+				dialog.setFilterPath("c:\\");
+				String path = dialog.open();
+       	 		if(path!=null) {
+       	 			readFile(path);
+       	 		}
+			}
+        
+		};
+	}
+
 	private void readFile(String path) {
 		 ObjectMapper mapper = new ObjectMapper();
 			 try (FileReader file = new FileReader(path)) {
@@ -71,58 +85,65 @@ public class TopMenu extends MenuManager {
 			 } catch (IOException e) {
 				 e.printStackTrace();
 			 }				
-			}
-	
-private MenuManager createFileMenu() {
-		 MenuManager menu = new MenuManager("&File", "Id01");
-	      menu.add(new Action("Open") {
-	    	  
-	         public void run() {
-	        	FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-	        	dialog.setFilterPath("c:\\");
-	   	        String path = dialog.open();
-	        	 		if(path!=null) {
-	        	 			readFile(path);
-	        	 		}
-	         }
-	      });
-	      menu.add(new Action("Save") {
-				@Override
-				public void run() {
-				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				dialog.setFilterPath("c:\\");
-				String[] ext = new String[] {".json"};
-	        	dialog.setFilterExtensions(ext);
-				dialog.setFileName("*" + ".json");
-				String path = dialog.open();
-					if(path!=null) {
-						writeFile(path);
-					}
-				}
-			});
-	 
-	      menu.add(new Action() {
-	         public String getText() {
-	            return "Exit";
-	         }
-	          
-	         public void run() {
-	            getShell().dispose();
-	         }
-	      });
-	        
-	      return menu;
 	}
 
-private MenuManager createEditMenu() {
-	MenuManager menu = new MenuManager();
-	menu.setMenuText("Edit");
-	menu.add(new Action("Edit") {
-         public void run() {
-        	 
-         }
-      });
-	return menu;
+	private Action createSaveAction() {
+		return new Action("Save") {
+			@Override
+			public void run() {
+				saveToJson();
+			}
+		};
+	}
+	
+
+	private void writeFile(String path) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			FileWriter file = new FileWriter(path);
+			mapper.writeValue(file, userSupplier.get());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private IAction createExitAction() {
+		return new Action("Exit") {
+			public void run() {
+				   
+		            boolean res = MessageDialog.openConfirm(getShell(), "Exit", "Do you want to save data?");
+		            if(res) {
+		            	saveToJson();
+		            	getShell().getDisplay().dispose();
+		            } else {
+		            	getShell().getDisplay().dispose();
+		            }
+			}
+
+			
+		};
+	}
+	
+	private void saveToJson() {
+		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+		dialog.setFilterPath("c:\\");
+		String[] ext = new String[] {".json"};
+		dialog.setFilterExtensions(ext);
+		dialog.setFileName("*" + ".json");
+		String path = dialog.open();
+		if(path!=null) {
+		writeFile(path);
+		}		
+	}
+	
+	private MenuManager createEditMenu() {
+		MenuManager menu = new MenuManager();
+		menu.setMenuText("Edit");
+		menu.add(new Action("Edit") {
+			public void run() {
+			}
+		});
+		return menu;
 }
 
 private MenuManager createHelpMenu() {
@@ -132,7 +153,7 @@ private MenuManager createHelpMenu() {
          public String getText() {
             return "About";
          }
-          
+         
          public void run() {
 	            String[] buttons = { IDialogConstants.OK_LABEL };
 	            MessageDialog dialog = new MessageDialog(getShell(), "Help", null,
