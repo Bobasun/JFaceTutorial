@@ -37,6 +37,7 @@ public class Controller {
 		}
 	}
 	
+	
 	private UserData convertFromInput(String name,String group, boolean task) {
 		UserData user = view.getLocalUserData();
 //		view.getLocalUserData().setName(name);
