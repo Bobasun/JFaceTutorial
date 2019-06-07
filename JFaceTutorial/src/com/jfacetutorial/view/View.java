@@ -55,6 +55,7 @@ public class View {
 	private Label nameLabel;
 	public Consumer<UserData> saveConsumer; 
 	public Supplier<Map<Long,UserData>> userSupplier;
+	private Consumer<Long> deleteConsumer;
 	
 	/**
 	 * @wbp.parser.entryPoint
@@ -276,8 +277,16 @@ public class View {
 	}
 	
 	private void createListeners() {
-		getSaveButton().addSelectionListener(new SelectionListener() {
-			
+		createSaveButtonListener();
+		createNewButtonListener();
+		createCancelButtonListener();
+		createDeleteButtonListener();
+	}
+
+
+	private void createSaveButtonListener() {
+		saveButton.addSelectionListener(new SelectionAdapter() {
+		
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if(getNameInput().getText() != "" 
@@ -286,18 +295,15 @@ public class View {
 						  getCheckButton().getSelection()));
 				deleteStar();
 				} else {
-					createErrorMessage(arg0.widget.getDisplay().getActiveShell());
+					createErrorSaveMessage(arg0.widget.getDisplay().getActiveShell());
 				}
 				getTableViewer().setInput(userSupplier.get());
 			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-			}
-		});
 		
+		});		
 	}
-	
-	private void createErrorMessage(Shell activeShell) {
+
+	private void createErrorSaveMessage(Shell activeShell) {
 		String[] button = { IDialogConstants.OK_LABEL };
 		MessageDialog message = new MessageDialog(activeShell, "Error", null, 
 				"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
@@ -312,6 +318,52 @@ public class View {
 	private void setStar() {
 		getNameLabel().setText("Name *");
 		getGroupLabel().setText("Group *");	
+	}
+	
+	private void createNewButtonListener() {
+		newButton.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				setStar();
+				setEmptyInput();
+				localUserData = null;
+			}
+		});
+	}
+	
+	private void createCancelButtonListener() {
+		cancelButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setStar();
+				setEmptyInput();
+			}
+		});
+	}
+	
+	private void createDeleteButtonListener() {
+		deleteButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(localUserData == null) {
+					createErrorDeleteMessage(e.display.getActiveShell());
+					return;
+				}
+				deleteConsumer.accept(localUserData.getId());
+				setStar();
+				getTableViewer().setInput(userSupplier.get());
+			}
+		});
+	}
+	
+	private void createErrorDeleteMessage(Shell activeShell) {
+		String[] buttons = { IDialogConstants.OK_LABEL };
+		MessageDialog message = new MessageDialog(activeShell, "Error", null, 
+				"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
+		message.open();				
 	}
 	
 	public Button getDeleteButton() {
@@ -369,6 +421,10 @@ public class View {
 
 	public void addAllUser(Supplier<Map <Long,UserData>> supplier) {
 		this.userSupplier = supplier;
+	}
+
+	public void addDeleteAction(Consumer<Long> consumer) {
+		this.deleteConsumer = consumer;
 	}
 	
 	

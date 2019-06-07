@@ -214,7 +214,7 @@ private MenuManager createFileMenu() {
 	private void createButtonsListeners() {
 		view.addAllUser(controller::getAllUsers);
 		view.addSaveAction(controller::save);
-		
+		view.addDeleteAction(controller::delete);
 //	    //action.addSaveListener(controller.createSaveListener());
 //		view.getSaveButton().addSelectionListener(new SelectionListener() {
 //			
@@ -232,9 +232,9 @@ private MenuManager createFileMenu() {
 //				
 //			}
 //		});
-		view.getNewButton().addSelectionListener(controller.createNewListener());
-		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
-		view.getCancelButton().addSelectionListener(controller.createCancelListener());		
+//		view.getNewButton().addSelectionListener(controller.createNewListener());
+//		view.getDeleteButton().addSelectionListener(controller.createDeleteListener());
+//		view.getCancelButton().addSelectionListener(controller.createCancelListener());		
 	}
 	public void run() {
 		

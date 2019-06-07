@@ -84,55 +84,59 @@ public class Controller {
 //		 view.getGroupLabel().setText("Group");				
 //	}
 	
-	private void setStar() {
-		view.getNameLabel().setText("Name *");
-		view.getGroupLabel().setText("Group *");	
+//	private void setStar() {
+//		view.getNameLabel().setText("Name *");
+//		view.getGroupLabel().setText("Group *");	
+//	}
+	
+//	public SelectionListener createNewListener() {
+//		return new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				view.getNameInput().setText("");
+//				view.getGroupInput().setText("");
+//				view.getCheckButton().setSelection(false);
+//				setStar();
+//				view.setLocalUserData(null);
+//			}
+//		};
+//	}
+	
+//	public SelectionListener createDeleteListener() {
+//		return new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if(view.getLocalUserData()==null) {
+//					String[] buttons = { IDialogConstants.OK_LABEL };
+//					MessageDialog message = new MessageDialog(e.display.getActiveShell(), "Error", null, 
+//							"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
+//					message.open();
+//					return;
+//				}
+//				userService.delete(view.getLocalUserData().getId());
+//				setStar();
+//				view.getTableViewer().setInput(userService.getAllUsers());
+//			
+//			}
+//		};
+//	}
+	
+	public void delete(Long id) {
+		userService.delete(id);
 	}
 	
-	public SelectionListener createNewListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				view.getNameInput().setText("");
-				view.getGroupInput().setText("");
-				view.getCheckButton().setSelection(false);
-				setStar();
-				view.setLocalUserData(null);
-			}
-		};
-	}
-	
-	public SelectionListener createDeleteListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(view.getLocalUserData()==null) {
-					String[] buttons = { IDialogConstants.OK_LABEL };
-					MessageDialog message = new MessageDialog(e.display.getActiveShell(), "Error", null, 
-							"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
-					message.open();
-					return;
-				}
-				userService.delete(view.getLocalUserData().getId());
-				setStar();
-				view.getTableViewer().setInput(userService.getAllUsers());
-			
-			}
-		};
-	}
-	
-	public SelectionListener createCancelListener() {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				view.getNameInput().setText("");
-				view.getGroupInput().setText("");
-				setStar();
-				view.getCheckButton().setSelection(false);
-			}
-			
-		};
-	}
+//	public SelectionListener createCancelListener() {
+//		return new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				view.getNameInput().setText("");
+//				view.getGroupInput().setText("");
+//				setStar();
+//				view.getCheckButton().setSelection(false);
+//			}
+//			
+//		};
+//	}
 		
 	public Map <Long,UserData> getAllUsers() {
 		return userService.getAllUsers();
