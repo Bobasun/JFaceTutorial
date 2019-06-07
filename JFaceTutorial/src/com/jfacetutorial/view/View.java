@@ -5,20 +5,26 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -64,16 +70,12 @@ public class View {
 		SashForm sashForm = createSashForm(mainComposite);
 		tableViewer = createTableViewer(sashForm);
 		
+		
+		
 //		new mytable
 //		 new TopMen () 
 //		 new Table(sashForm);
 //		 new Editor(sashForm, new ButtomPanale());
-//		tableViewer = new TableViewer(sashForm, SWT.MULTI | SWT.H_SCROLL
-//	            | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-//		tableViewer.setUseHashlookup(true);
-//		createTablecolumns(tableViewer);
-//		tableViewer.getTable().setHeaderVisible(true);
-//		tableViewer.getTable().setLinesVisible(true);
 		
 		Composite inputComposite = new Composite(sashForm, SWT.NONE);
 		inputComposite.setLayout(new FormLayout());
@@ -92,11 +94,19 @@ public class View {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
+				if(getNameInput().getText() != "" 
+						&& getGroupInput().getText() != "") {
 				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
 						  getCheckButton().getSelection()));
+				deleteStar();
+				} else {
+					String[] button = { IDialogConstants.OK_LABEL };
+					MessageDialog message = new MessageDialog(arg0.widget.getDisplay().getActiveShell(), "Error", null, 
+							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
+					message.open();
+				}
 				getTableViewer().setInput(userSupplier.get());
 			}
-			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
@@ -104,6 +114,16 @@ public class View {
 			}
 		});
 		
+	}
+	
+	private void deleteStar() {
+		 getNameLabel().setText("Name");
+		 getGroupLabel().setText("Group");				
+	}
+	
+	private void setStar() {
+		getNameLabel().setText("Name *");
+		getGroupLabel().setText("Group *");	
 	}
 
 	private TableViewer createTableViewer(SashForm sashForm) {
@@ -113,9 +133,18 @@ public class View {
 		tableViewer.setUseHashlookup(true);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
+		
+		
+//		ViewerComparator comparator = new SimpleViewerComparator();
+//		tableViewer.setComparator(comparator); 
+		
+		
 		createTablecolumns(tableViewer);
 		tableViewer.setContentProvider(new UserContentProvider());
 		tableViewer.addSelectionChangedListener(createTableViewListener());
+		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		
 		
 		return tableViewer;
 	}
@@ -222,6 +251,17 @@ public class View {
 			
 		});
 		
+		new ColumnViewerComparator(tableViewer, nameColuumn) {
+
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				UserData user1 = (UserData) e1;
+				UserData user2 = (UserData) e2;
+				return user1.getName().compareToIgnoreCase(user2.getName());
+			}
+
+		};
+		
 		TableViewerColumn groupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		groupColumn.getColumn().setWidth(100);
 		groupColumn.getColumn().setText("Group");
@@ -234,6 +274,17 @@ public class View {
 			}
 			
 		});
+		
+		new ColumnViewerComparator(tableViewer, groupColumn) {
+
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				UserData user1 = (UserData) e1;
+				UserData user2 = (UserData) e2;
+				return user1.getGroup().compareToIgnoreCase(user2.getGroup());
+			}
+
+		};
 		
 		TableViewerColumn checkColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		checkColumn.getColumn().setWidth(50);
@@ -311,12 +362,10 @@ public class View {
 	}
 
 	public void addSaveAction(Consumer<UserData> consumer) {
-		// TODO Auto-generated method stub
 			this.saveConsumer = consumer;
 	}
 
 	public void addAllUser(Supplier<Map <Long,UserData>> supplier) {
-		// TODO Auto-generated method stub
 		this.userSupplier = supplier;
 	}
 	

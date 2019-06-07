@@ -27,15 +27,15 @@ public class Controller {
 		
 	}
 
-	public void save (String name, String group, boolean check) {
-		if(view.getLocalUserData() == null) {
-			view.setLocalUserData(new UserDataImpl(name,group,check));
-			userService.addUser(view.getLocalUserData());
-		} else {
-			view.setLocalUserData(convertFromInput(name,group,check));
-			userService.update(view.getLocalUserData());
-		}
-	}
+//	public void save (String name, String group, boolean check) {
+//		if(view.getLocalUserData() == null) {
+//			view.setLocalUserData(new UserDataImpl(name,group,check));
+//			userService.addUser(view.getLocalUserData());
+//		} else {
+//			view.setLocalUserData(convertFromInput(name,group,check));
+//			userService.update(view.getLocalUserData());
+//		}
+//	}
 	
 	public void save (UserData userData) {
 		if(view.getLocalUserData() == null) {
@@ -56,35 +56,33 @@ public class Controller {
 		return user;
 	}
 	
-	public SelectionListener createSaveListener() {
-		return new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(view.getNameInput().getText()!="" && view.getGroupInput().getText() != "") {
-					 save(view.getNameInput().getText(),view.getGroupInput().getText(), 
-							  view.getCheckButton().getSelection());
-					  deleteStar();
-				} else {
-					String[] button = { IDialogConstants.OK_LABEL };
-					MessageDialog message = new MessageDialog(e.widget.getDisplay().getActiveShell(), "Error", null, 
-							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
-					message.open();
-				}
-			 	view.getTableViewer().setInput(userService.getAllUsers());
-			}
-
-			
-		};
-	}
-	public void save() {
-		System.err.println("save");
-	}
+//	public SelectionListener createSaveListener() {
+//		return new SelectionAdapter() {
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if(view.getNameInput().getText()!="" && view.getGroupInput().getText() != "") {
+//					 save(view.getNameInput().getText(),view.getGroupInput().getText(), 
+//							  view.getCheckButton().getSelection());
+//					  deleteStar();
+//				} else {
+//					String[] button = { IDialogConstants.OK_LABEL };
+//					MessageDialog message = new MessageDialog(e.widget.getDisplay().getActiveShell(), "Error", null, 
+//							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
+//					message.open();
+//				}
+//			 	view.getTableViewer().setInput(userService.getAllUsers());
+//			}
+//
+//			
+//		};
+//	}
 	
-	private void deleteStar() {
-		 view.getNameLabel().setText("Name");
-		 view.getGroupLabel().setText("Group");				
-	}
+	
+//	private void deleteStar() {
+//		 view.getNameLabel().setText("Name");
+//		 view.getGroupLabel().setText("Group");				
+//	}
 	
 	private void setStar() {
 		view.getNameLabel().setText("Name *");

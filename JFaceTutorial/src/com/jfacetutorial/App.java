@@ -156,18 +156,18 @@ private MenuManager createFileMenu() {
 	@Override
 	protected MenuManager createMenuManager() {
 		
-		//return new MyMenuManager();
-		MenuManager menuManager = new MenuManager();
-	      menuManager.add(createFileMenu());
+//		return new MyMenuManager();
+		MenuManager mainMenu = new MenuManager();
+	      mainMenu.add(createFileMenu());
 	      
 	      MenuManager menuManager_1 = createEditMenu();
 	      menuManager_1.setVisible(true);
-	      menuManager.add(menuManager_1);
+	      mainMenu.add(menuManager_1);
 	      
 	      MenuManager menuManager_2 = createHelpMenu();
 	      menuManager_2.setVisible(true);
-	      menuManager.add(menuManager_2);
-	      return menuManager;
+	      mainMenu.add(menuManager_2);
+	      return mainMenu;
 	}
 	
 	private MenuManager createEditMenu() {
@@ -175,7 +175,6 @@ private MenuManager createFileMenu() {
 		menu.setMenuText("Edit");
 		menu.add(new Action("Edit") {
 	         public void run() {
-	          
 	         }
 	      });
 		return menu;
