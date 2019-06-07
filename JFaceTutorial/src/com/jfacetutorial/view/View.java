@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -37,7 +38,6 @@ import com.jfacetutorial.UserContentProvider;
 import com.jfacetutorial.modellayer.UserData;
 import com.jfacetutorial.modellayer.UserDataImpl;
 
-import swing2swt.layout.BoxLayout;
 
 public class View {
 	
@@ -65,65 +65,22 @@ public class View {
 	public Composite createWidgets(Composite parent) {
 		Composite mainComposite = new Composite(parent,SWT.NONE);
 		mainComposite.setLayout(new FillLayout());
-		
-		
 		SashForm sashForm = createSashForm(mainComposite);
 		tableViewer = createTableViewer(sashForm);
-		
-		
 		
 //		new mytable
 //		 new TopMen () 
 //		 new Table(sashForm);
-//		 new Editor(sashForm, new ButtomPanale());
-		
-		Composite inputComposite = new Composite(sashForm, SWT.NONE);
-		inputComposite.setLayout(new FormLayout());
-		
-		createInputComponents(inputComposite);
-		createListeners();
-//		tableViewer.setContentProvider(new UserContentProvider());
-//		tableViewer.addSelectionChangedListener(createTableViewListener());
-	
+//		 new Editor(sashForm, new ButtomPanale());	
+		createInputComposite(sashForm);
 		return mainComposite;
 	}
 	
-	private void createListeners() {
-		getSaveButton().addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				if(getNameInput().getText() != "" 
-						&& getGroupInput().getText() != "") {
-				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
-						  getCheckButton().getSelection()));
-				deleteStar();
-				} else {
-					String[] button = { IDialogConstants.OK_LABEL };
-					MessageDialog message = new MessageDialog(arg0.widget.getDisplay().getActiveShell(), "Error", null, 
-							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
-					message.open();
-				}
-				getTableViewer().setInput(userSupplier.get());
-			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
-	}
-	
-	private void deleteStar() {
-		 getNameLabel().setText("Name");
-		 getGroupLabel().setText("Group");				
-	}
-	
-	private void setStar() {
-		getNameLabel().setText("Name *");
-		getGroupLabel().setText("Group *");	
+	private SashForm createSashForm(Composite mainComposite) {
+		// TODO Auto-generated method stub
+		SashForm sashForm = new SashForm(mainComposite, SWT.NONE);
+		sashForm.setTouchEnabled(true);
+		return sashForm;
 	}
 
 	private TableViewer createTableViewer(SashForm sashForm) {
@@ -133,27 +90,108 @@ public class View {
 		tableViewer.setUseHashlookup(true);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
-		
-		
-//		ViewerComparator comparator = new SimpleViewerComparator();
-//		tableViewer.setComparator(comparator); 
-		
-		
 		createTablecolumns(tableViewer);
 		tableViewer.setContentProvider(new UserContentProvider());
 		tableViewer.addSelectionChangedListener(createTableViewListener());
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		
-		
 		return tableViewer;
 	}
 
-	private SashForm createSashForm(Composite mainComposite) {
-		// TODO Auto-generated method stub
-		SashForm sashForm =new SashForm(mainComposite, SWT.NONE);
-		sashForm.setTouchEnabled(true);
-		return sashForm;
+	private void createTablecolumns(TableViewer tableViewer) {
+		createNameColumn(tableViewer);
+		createGroupColumn(tableViewer);
+		createCheckColumn(tableViewer);
+	}
+
+	private void createNameColumn(TableViewer tableViewer) {
+		TableViewerColumn nameColuumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		nameColuumn.getColumn().setWidth(100);
+		nameColuumn.getColumn().setText("Name");
+		nameColuumn.setLabelProvider(new ColumnLabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+				UserData user = (UserData) element;
+				return user.getName();
+			}
+		});
+		createNameComparator(tableViewer,nameColuumn);		
+	}
+
+	private void createNameComparator(TableViewer tableViewer, TableViewerColumn nameColuumn) {
+		new ColumnViewerComparator(tableViewer, nameColuumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				UserData user1 = (UserData) e1;
+				UserData user2 = (UserData) e2;
+				return user1.getName().compareToIgnoreCase(user2.getName());
+			}
+		};		
+	}
+	
+	private void createGroupColumn(TableViewer tableViewer) {
+		TableViewerColumn groupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		groupColumn.getColumn().setWidth(100);
+		groupColumn.getColumn().setText("Group");
+		groupColumn.setLabelProvider(new ColumnLabelProvider() {
+			
+			@Override
+			public String getText(Object element) {
+				UserData user = (UserData) element;
+				return user.getGroup();
+			}
+		});
+		createGroupComparator(tableViewer,groupColumn);
+	}
+
+	private void createGroupComparator(TableViewer tableViewer, TableViewerColumn groupColumn) {
+		new ColumnViewerComparator(tableViewer, groupColumn) {
+
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				UserData user1 = (UserData) e1;
+				UserData user2 = (UserData) e2;
+				return user1.getGroup().compareToIgnoreCase(user2.getGroup());
+			}
+		};				
+	}
+
+	private void createCheckColumn(TableViewer tableViewer) {
+		TableViewerColumn checkColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		checkColumn.getColumn().setWidth(50);
+		checkColumn.getColumn().setText("SWT");
+		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());				
+	}
+	
+	private ISelectionChangedListener createTableViewListener() {
+		return new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent arg0) {
+				IStructuredSelection selection = (IStructuredSelection) arg0.getSelection();
+				if(selection.getFirstElement() == null) {
+					setEmptyInput();
+					return;
+				}
+				localUserData = (UserData) selection.getFirstElement();
+				nameInput.setText(localUserData.getName());
+				groupInput.setText(localUserData.getGroup());
+				checkButton.setSelection(localUserData.isTaskDone());
+			}
+		};
+	}
+	
+	private void setEmptyInput() {
+		nameInput.setText("");
+		groupInput.setText("");
+		checkButton.setSelection(false);				
+	}
+	
+	private void createInputComposite(SashForm sashForm) {
+		Composite inputComposite = new Composite(sashForm, SWT.NONE);
+		inputComposite.setLayout(new FormLayout());
+		createInputComponents(inputComposite);
+		createListeners();		
 	}
 
 	private void createInputComponents(Composite inputComposite) {
@@ -236,80 +274,44 @@ public class View {
 		groupLabel.setLayoutData(formGroupLabel);
 		groupLabel.setText("Group");		
 	}
-
-	private void createTablecolumns(TableViewer tableViewer) {
-		TableViewerColumn nameColuumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		nameColuumn.getColumn().setWidth(100);
-		nameColuumn.getColumn().setText("Name");
-		nameColuumn.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(Object element) {
-				UserData user = (UserData) element;
-				return user.getName();
-			}
-			
-		});
-		
-		new ColumnViewerComparator(tableViewer, nameColuumn) {
-
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				UserData user1 = (UserData) e1;
-				UserData user2 = (UserData) e2;
-				return user1.getName().compareToIgnoreCase(user2.getName());
-			}
-
-		};
-		
-		TableViewerColumn groupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		groupColumn.getColumn().setWidth(100);
-		groupColumn.getColumn().setText("Group");
-		groupColumn.setLabelProvider(new ColumnLabelProvider() {
+	
+	private void createListeners() {
+		getSaveButton().addSelectionListener(new SelectionListener() {
 			
 			@Override
-			public String getText(Object element) {
-				UserData user = (UserData) element;
-				return user.getGroup();
-			}
-			
-		});
-		
-		new ColumnViewerComparator(tableViewer, groupColumn) {
-
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				UserData user1 = (UserData) e1;
-				UserData user2 = (UserData) e2;
-				return user1.getGroup().compareToIgnoreCase(user2.getGroup());
-			}
-
-		};
-		
-		TableViewerColumn checkColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		checkColumn.getColumn().setWidth(50);
-		checkColumn.getColumn().setText("SWT");
-		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());		
-	}
-
-	private ISelectionChangedListener createTableViewListener() {
-		return new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent arg0) {
-				IStructuredSelection selection = (IStructuredSelection) arg0.getSelection();
-				if(selection.getFirstElement() == null) {
-					nameInput.setText("");
-					groupInput.setText("");
-					checkButton.setSelection(false);
-					return;
+			public void widgetSelected(SelectionEvent arg0) {
+				if(getNameInput().getText() != "" 
+						&& getGroupInput().getText() != "") {
+				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
+						  getCheckButton().getSelection()));
+				deleteStar();
+				} else {
+					createErrorMessage(arg0.widget.getDisplay().getActiveShell());
 				}
-				localUserData = (UserData) selection.getFirstElement();
-				nameInput.setText(localUserData.getName());
-				groupInput.setText(localUserData.getGroup());
-				checkButton.setSelection(localUserData.isTaskDone());
+				getTableViewer().setInput(userSupplier.get());
 			}
-		};
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
+		});
+		
+	}
+	
+	private void createErrorMessage(Shell activeShell) {
+		String[] button = { IDialogConstants.OK_LABEL };
+		MessageDialog message = new MessageDialog(activeShell, "Error", null, 
+				"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
+		message.open();		
+	}
+	
+	private void deleteStar() {
+		 getNameLabel().setText("Name");
+		 getGroupLabel().setText("Group");				
+	}
+	
+	private void setStar() {
+		getNameLabel().setText("Name *");
+		getGroupLabel().setText("Group *");	
 	}
 	
 	public Button getDeleteButton() {

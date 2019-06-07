@@ -200,8 +200,6 @@ private MenuManager createFileMenu() {
 		return menu;
 	}
 	
-	
-
 	@Override
 	protected Control createContents(Composite parent) {
 		

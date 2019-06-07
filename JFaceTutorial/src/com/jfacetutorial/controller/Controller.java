@@ -106,9 +106,17 @@ public class Controller {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if(view.getLocalUserData()==null) {
+					String[] buttons = { IDialogConstants.OK_LABEL };
+					MessageDialog message = new MessageDialog(e.display.getActiveShell(), "Error", null, 
+							"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
+					message.open();
+					return;
+				}
 				userService.delete(view.getLocalUserData().getId());
 				setStar();
 				view.getTableViewer().setInput(userService.getAllUsers());
+			
 			}
 		};
 	}
