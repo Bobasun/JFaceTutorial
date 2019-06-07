@@ -25,9 +25,12 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -57,12 +60,10 @@ public class View {
 	public Supplier<Map<Long,UserData>> userSupplier;
 	private Consumer<Long> deleteConsumer;
 	
-	/**
-	 * @wbp.parser.entryPoint
-	 */
+	
 	public View() {
 	}
-
+	
 	public Composite createWidgets(Composite parent) {
 		Composite mainComposite = new Composite(parent,SWT.NONE);
 		mainComposite.setLayout(new FillLayout());
@@ -108,6 +109,7 @@ public class View {
 		TableViewerColumn nameColuumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		nameColuumn.getColumn().setWidth(100);
 		nameColuumn.getColumn().setText("Name");
+		nameColuumn.getColumn().setAlignment(SWT.CENTER);
 		nameColuumn.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -134,6 +136,7 @@ public class View {
 		TableViewerColumn groupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		groupColumn.getColumn().setWidth(100);
 		groupColumn.getColumn().setText("Group");
+		groupColumn.getColumn().setAlignment(SWT.CENTER);
 		groupColumn.setLabelProvider(new ColumnLabelProvider() {
 			
 			@Override
@@ -161,6 +164,7 @@ public class View {
 		TableViewerColumn checkColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		checkColumn.getColumn().setWidth(50);
 		checkColumn.getColumn().setText("SWT");
+		checkColumn.getColumn().setAlignment(SWT.CENTER);
 		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());				
 	}
 	
@@ -174,6 +178,7 @@ public class View {
 					setEmptyInput();
 					return;
 				}
+				deleteStar();
 				localUserData = (UserData) selection.getFirstElement();
 				nameInput.setText(localUserData.getName());
 				groupInput.setText(localUserData.getGroup());
@@ -196,6 +201,7 @@ public class View {
 	}
 
 	private void createInputComponents(Composite inputComposite) {
+		    
 		nameInput = new Text(inputComposite, SWT.BORDER);
 		FormData formNameInput = new FormData();
 		formNameInput.right = new FormAttachment(100, -33);
