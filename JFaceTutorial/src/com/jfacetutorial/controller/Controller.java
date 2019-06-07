@@ -27,16 +27,6 @@ public class Controller {
 		
 	}
 
-//	public void save (String name, String group, boolean check) {
-//		if(view.getLocalUserData() == null) {
-//			view.setLocalUserData(new UserDataImpl(name,group,check));
-//			userService.addUser(view.getLocalUserData());
-//		} else {
-//			view.setLocalUserData(convertFromInput(name,group,check));
-//			userService.update(view.getLocalUserData());
-//		}
-//	}
-	
 	public void save (UserData userData) {
 		if(view.getLocalUserData() == null) {
 			view.setLocalUserData(userData);
@@ -47,96 +37,25 @@ public class Controller {
 		}
 	}
 	
-	
 	private UserData convertFromInput(String name,String group, boolean task) {
 		UserData user = view.getLocalUserData();
+//		view.getLocalUserData().setName(name);
+//		view.getLocalUserData().setGroup(group);
+//		if(!(user.getName()==name && user.getGroup() == group)) {
+//			System.out.println(user.getName() + " " + name);
+//			System.out.println(user.getGroup() + " " + group);
 		user.setName(name);
 		user.setGroup(group);
 		user.setTaskDone(task);
+		
+//		user.setId();
 		return user;
 	}
-	
-//	public SelectionListener createSaveListener() {
-//		return new SelectionAdapter() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				if(view.getNameInput().getText()!="" && view.getGroupInput().getText() != "") {
-//					 save(view.getNameInput().getText(),view.getGroupInput().getText(), 
-//							  view.getCheckButton().getSelection());
-//					  deleteStar();
-//				} else {
-//					String[] button = { IDialogConstants.OK_LABEL };
-//					MessageDialog message = new MessageDialog(e.widget.getDisplay().getActiveShell(), "Error", null, 
-//							"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
-//					message.open();
-//				}
-//			 	view.getTableViewer().setInput(userService.getAllUsers());
-//			}
-//
-//			
-//		};
-//	}
-	
-	
-//	private void deleteStar() {
-//		 view.getNameLabel().setText("Name");
-//		 view.getGroupLabel().setText("Group");				
-//	}
-	
-//	private void setStar() {
-//		view.getNameLabel().setText("Name *");
-//		view.getGroupLabel().setText("Group *");	
-//	}
-	
-//	public SelectionListener createNewListener() {
-//		return new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				view.getNameInput().setText("");
-//				view.getGroupInput().setText("");
-//				view.getCheckButton().setSelection(false);
-//				setStar();
-//				view.setLocalUserData(null);
-//			}
-//		};
-//	}
-	
-//	public SelectionListener createDeleteListener() {
-//		return new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				if(view.getLocalUserData()==null) {
-//					String[] buttons = { IDialogConstants.OK_LABEL };
-//					MessageDialog message = new MessageDialog(e.display.getActiveShell(), "Error", null, 
-//							"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
-//					message.open();
-//					return;
-//				}
-//				userService.delete(view.getLocalUserData().getId());
-//				setStar();
-//				view.getTableViewer().setInput(userService.getAllUsers());
-//			
-//			}
-//		};
-//	}
 	
 	public void delete(Long id) {
 		userService.delete(id);
 	}
 	
-//	public SelectionListener createCancelListener() {
-//		return new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				view.getNameInput().setText("");
-//				view.getGroupInput().setText("");
-//				setStar();
-//				view.getCheckButton().setSelection(false);
-//			}
-//			
-//		};
-//	}
 		
 	public Map <Long,UserData> getAllUsers() {
 		return userService.getAllUsers();

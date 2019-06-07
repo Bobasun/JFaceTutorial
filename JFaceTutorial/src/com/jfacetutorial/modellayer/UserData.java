@@ -12,4 +12,5 @@ public interface UserData {
 	void setGroup(String group);
 	void setTaskDone(boolean taskDone);
 	long getId();
+	void setId(long id);
 }

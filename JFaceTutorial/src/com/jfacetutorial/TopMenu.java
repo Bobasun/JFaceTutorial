@@ -95,7 +95,6 @@ private MenuManager createFileMenu() {
 			}
 		};
 	}
-	
 
 	private void writeFile(String path) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -110,7 +109,7 @@ private MenuManager createFileMenu() {
 	private IAction createExitAction() {
 		return new Action("Exit") {
 			public void run() {
-				   
+			
 		            boolean res = MessageDialog.openConfirm(getShell(), "Exit", "Do you want to save data?");
 		            if(res) {
 		            	saveToJson();
@@ -118,9 +117,7 @@ private MenuManager createFileMenu() {
 		            } else {
 		            	getShell().getDisplay().dispose();
 		            }
-			}
-
-			
+			}	
 		};
 	}
 	

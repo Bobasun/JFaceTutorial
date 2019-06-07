@@ -378,8 +378,10 @@ public class View {
 			public void widgetSelected(SelectionEvent arg0) {
 				if(getNameInput().getText() != "" 
 						&& getGroupInput().getText() != "") {
+				
 				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
 						  getCheckButton().getSelection()));
+					
 				deleteStar();
 				} else {
 					createErrorSaveMessage(arg0.widget.getDisplay().getActiveShell());
