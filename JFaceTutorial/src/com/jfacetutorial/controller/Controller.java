@@ -31,6 +31,8 @@ public class Controller {
 		if(view.getLocalUserData() == null) {
 			view.setLocalUserData(userData);
 			userService.addUser(view.getLocalUserData());
+		} else if(getAllUsers().containsValue(userData)) {
+			return;
 		} else {
 			view.setLocalUserData(convertFromInput(userData.getName(),userData.getGroup(),userData.isTaskDone()));
 			userService.update(view.getLocalUserData());
@@ -40,16 +42,9 @@ public class Controller {
 	
 	private UserData convertFromInput(String name,String group, boolean task) {
 		UserData user = view.getLocalUserData();
-//		view.getLocalUserData().setName(name);
-//		view.getLocalUserData().setGroup(group);
-//		if(!(user.getName()==name && user.getGroup() == group)) {
-//			System.out.println(user.getName() + " " + name);
-//			System.out.println(user.getGroup() + " " + group);
 		user.setName(name);
 		user.setGroup(group);
 		user.setTaskDone(task);
-		
-//		user.setId();
 		return user;
 	}
 	

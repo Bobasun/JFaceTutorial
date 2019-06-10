@@ -11,6 +11,5 @@ public interface UserService {
 	UserData getUserById (long id);
 	void update(UserData user);
 	void setAllUsers(Map<Long, UserData> map);
-//	void setAllUsers(HashMap<Long, UserData> map);
 	
 }
