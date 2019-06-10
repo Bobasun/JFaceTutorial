@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfacetutorial.modellayer.TempUsers;
 import com.jfacetutorial.modellayer.UserData;
+import com.jfacetutorial.modellayer.UserDataImpl;
 
 public class TopMenu extends MenuManager {
 	private Shell shell;
@@ -28,6 +29,8 @@ public class TopMenu extends MenuManager {
 	private Supplier<Map<Long, UserData>> userSupplier;
 	private Consumer<Map<Long, UserData>> userConsumer;
 	private Supplier<TableViewer> tableSupplier;
+	private Consumer<UserData> saveConsumer;
+	private Supplier<UserData> newUserSupplier;
 
 	public TopMenu(Shell shell) {
 		this.shell = shell;
@@ -137,6 +140,8 @@ public class TopMenu extends MenuManager {
 		menu.setMenuText("Edit");
 		menu.add(new Action("Edit") {
 			public void run() {
+				saveConsumer.accept(newUserSupplier.get());
+				tableSupplier.get().setInput(userSupplier.get());
 			}
 		});
 		return menu;
@@ -170,6 +175,14 @@ public class TopMenu extends MenuManager {
 
 	public void addTableViewer(Supplier<TableViewer> supplier) {
 		this.tableSupplier = supplier;
+	}
+
+	public void addSaveAction(Consumer<UserData> consumer) {
+		this.saveConsumer = consumer;
+	}
+
+	public void addNewUser(Supplier<UserData> supplier) {
+		this.newUserSupplier = supplier;
 	}
 
 }

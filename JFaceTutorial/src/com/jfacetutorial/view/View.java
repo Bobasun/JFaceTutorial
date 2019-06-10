@@ -374,10 +374,7 @@ public class View {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (getNameInput().getText() != "" && getGroupInput().getText() != "") {
-
-					saveConsumer.accept(new UserDataImpl(getNameInput().getText(), getGroupInput().getText(),
-							getCheckButton().getSelection()));
-
+					saveConsumer.accept(newUser());
 					deleteStar();
 				} else {
 					createErrorSaveMessage(arg0.widget.getDisplay().getActiveShell());
@@ -387,6 +384,12 @@ public class View {
 
 		});
 	}
+	
+	public UserData newUser () {
+		return new UserDataImpl(getNameInput().getText(), getGroupInput().getText(),
+				getCheckButton().getSelection());
+	}
+	
 
 	private void createErrorSaveMessage(Shell activeShell) {
 		String[] button = { IDialogConstants.OK_LABEL };
