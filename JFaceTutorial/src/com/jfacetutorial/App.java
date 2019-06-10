@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.jfacetutorial.controller.Controller;
+import com.jfacetutorial.view.TopMenu;
 import com.jfacetutorial.view.View;
 
 import org.eclipse.jface.action.MenuManager;
@@ -42,6 +43,7 @@ public class App extends ApplicationWindow {
 		createReferences();
 	    return composite;
 	}
+
 
 	private void createReferences() {
 		view.addAllUser(controller::getAllUsers);
