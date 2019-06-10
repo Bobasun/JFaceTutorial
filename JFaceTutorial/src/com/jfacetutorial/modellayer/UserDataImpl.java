@@ -9,11 +9,16 @@ public class UserDataImpl implements UserData {
 	private String group;
 	private boolean taskDone;
 
+	
+	public UserDataImpl()  {
+		this.id = GenerateUtils.generateId();
+	}
+
 	public UserDataImpl(String name, String group, boolean taskDone) {
 		this.name = name;
 		this.group = group;
 		this.taskDone = taskDone;
-		this.id = GenerateUtils.generateId(name, group, taskDone);
+		this.id = GenerateUtils.generateId();
 	}
 
 	public UserDataImpl(String both) {
@@ -24,13 +29,26 @@ public class UserDataImpl implements UserData {
 		this.taskDone = Boolean.valueOf(users[3].trim());
 	}
 
+
+	@Override
+	@JsonValue
+	public String toString() {
+		return id + " and " + name + " and " + group + " and " + taskDone;
+	}
+
+
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((group == null) ? 0 : group.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (taskDone ? 1231 : 1237);
 		return result;
 	}
 
@@ -53,19 +71,7 @@ public class UserDataImpl implements UserData {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (taskDone != other.taskDone)
-			return false;
 		return true;
-	}
-
-	@Override
-	@JsonValue
-	public String toString() {
-		return id + " and " + name + " and " + group + " and " + taskDone;
-//		return "UserDataImpl [id=" + id + ", name=" + name + ", group=" + group + ", taskDone=" + taskDone + "]";
-	}
-
-	public UserDataImpl() {
 	}
 
 	public String getName() {

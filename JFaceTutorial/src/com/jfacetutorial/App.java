@@ -22,35 +22,34 @@ public class App extends ApplicationWindow {
 	
 	public App() {
 		super(null);
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		view = new View();
+		topMenu = new TopMenu(shell,view);
 		addMenuBar();
 	}
 	
 
 	@Override
 	protected MenuManager createMenuManager() {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		topMenu = new TopMenu(shell);
 		return topMenu.createMenuManager();
 	}
 	
 	@Override
 	protected Control createContents(Composite parent) {
-		view = new View();
-		
 		Composite composite = view.createWidgets(parent);
 		controller = new Controller(view);
-		createButtonsListeners();
+		createReferences();
 	    return composite;
 	}
 
-	private void createButtonsListeners() {
+	private void createReferences() {
 		view.addAllUser(controller::getAllUsers);
 		view.addSaveAction(controller::save);
 		view.addDeleteAction(controller::delete);
 		topMenu.addAllUser(controller::getAllUsers);
 		topMenu.setAllUser(controller::setAllUsers);
-		topMenu.addTableViewer(view::getTableViewer);
+		
 	}
 	
 	public void run() {

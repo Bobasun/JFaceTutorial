@@ -1,4 +1,4 @@
-package com.jfacetutorial;
+package com.jfacetutorial.view;
 
 import java.net.URL;
 
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+import com.jfacetutorial.App;
 import com.jfacetutorial.modellayer.UserData;
 
 public class ResourceUsingLabelProvider extends ColumnLabelProvider{
@@ -40,7 +41,7 @@ public class ResourceUsingLabelProvider extends ColumnLabelProvider{
 		  gc.setInterpolation(SWT.HIGH);
 		  gc.drawImage(image, 0, 0,image.getBounds().width, image.getBounds().height, 0, 0, width, height);
 		  gc.dispose();
-		  image.dispose(); // don't forget about me!
+		  image.dispose(); 
 		  return scaled;
 	}
 	

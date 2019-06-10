@@ -1,4 +1,4 @@
-package com.jfacetutorial;
+package com.jfacetutorial.view;
 
 import java.util.Map;
 import org.eclipse.jface.viewers.IStructuredContentProvider;

@@ -1,4 +1,4 @@
-package com.jfacetutorial;
+package com.jfacetutorial.view;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -28,12 +28,12 @@ public class TopMenu extends MenuManager {
 	private MenuManager mainMenu;
 	private Supplier<Map<Long, UserData>> userSupplier;
 	private Consumer<Map<Long, UserData>> userConsumer;
-	private Supplier<TableViewer> tableSupplier;
-	private Consumer<UserData> saveConsumer;
-	private Supplier<UserData> newUserSupplier;
+//	private Supplier<TableViewer> tableSupplier;
+	private View view;
 
-	public TopMenu(Shell shell) {
+	public TopMenu(Shell shell, View view) {
 		this.shell = shell;
+		this.view = view;
 	}
 
 	public MenuManager createMenuManager() {
@@ -64,7 +64,6 @@ public class TopMenu extends MenuManager {
 		return new Action("Open") {
 
 			public void run() {
-				System.out.println(getShell());
 				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
 				dialog.setFilterPath("c:\\");
 				String path = dialog.open();
@@ -72,7 +71,6 @@ public class TopMenu extends MenuManager {
 					readFile(path);
 				}
 			}
-
 		};
 	}
 
@@ -81,7 +79,7 @@ public class TopMenu extends MenuManager {
 		try (FileReader file = new FileReader(path)) {
 			TempUsers temp = mapper.readValue(file, TempUsers.class);
 			userConsumer.accept(temp.getMap());
-			tableSupplier.get().setInput(userSupplier.get());
+			view.getTableViewer().setInput(userSupplier.get());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -96,6 +94,18 @@ public class TopMenu extends MenuManager {
 				saveToJson();
 			}
 		};
+	}
+
+	private void saveToJson() {
+		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
+		dialog.setFilterPath("c:\\");
+		String[] ext = new String[] { ".json" };
+		dialog.setFilterExtensions(ext);
+		dialog.setFileName("*" + ".json");
+		String path = dialog.open();
+		if (path != null) {
+			writeFile(path);
+		}
 	}
 
 	private void writeFile(String path) {
@@ -123,25 +133,12 @@ public class TopMenu extends MenuManager {
 		};
 	}
 
-	private void saveToJson() {
-		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-		dialog.setFilterPath("c:\\");
-		String[] ext = new String[] { ".json" };
-		dialog.setFilterExtensions(ext);
-		dialog.setFileName("*" + ".json");
-		String path = dialog.open();
-		if (path != null) {
-			writeFile(path);
-		}
-	}
-
 	private MenuManager createEditMenu() {
 		MenuManager menu = new MenuManager();
 		menu.setMenuText("Edit");
-		menu.add(new Action("Edit") {
+		menu.add(new Action("Save") {
 			public void run() {
-				saveConsumer.accept(newUserSupplier.get());
-				tableSupplier.get().setInput(userSupplier.get());
+				view.save();
 			}
 		});
 		return menu;
@@ -173,16 +170,10 @@ public class TopMenu extends MenuManager {
 		this.userConsumer = consumer;
 	}
 
-	public void addTableViewer(Supplier<TableViewer> supplier) {
-		this.tableSupplier = supplier;
-	}
+//	public void addTableViewer(Supplier<TableViewer> supplier) {
+//		this.tableSupplier = supplier;
+//	}
 
-	public void addSaveAction(Consumer<UserData> consumer) {
-		this.saveConsumer = consumer;
-	}
 
-	public void addNewUser(Supplier<UserData> supplier) {
-		this.newUserSupplier = supplier;
-	}
 
 }

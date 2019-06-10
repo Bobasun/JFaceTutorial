@@ -7,7 +7,7 @@ public interface UserService {
 
 	Map<Long, UserData> getAllUsers();
 
-	void addUser(UserData user);
+	void add(UserData user);
 
 	void delete(long id);
 

@@ -20,15 +20,13 @@ public class Controller {
 	}
 
 	public void save(UserData userData) {
-		if (view.getLocalUserData() == null) {
-			view.setLocalUserData(userData);
-			userService.addUser(view.getLocalUserData());
-		} else if (getAllUsers().containsValue(userData)) {
-			return;
+
+		if (getAllUsers().containsKey(userData.getId())) {
+			userService.update(userData);
 		} else {
-			view.setLocalUserData(convertFromInput(userData.getName(), userData.getGroup(), userData.isTaskDone()));
-			userService.update(view.getLocalUserData());
+			userService.add(userData);
 		}
+		
 	}
 
 	private UserData convertFromInput(String name, String group, boolean task) {

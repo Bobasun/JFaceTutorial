@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import com.jfacetutorial.ResourceUsingLabelProvider;
-import com.jfacetutorial.UserContentProvider;
 import com.jfacetutorial.modellayer.UserData;
 import com.jfacetutorial.modellayer.UserDataImpl;
 
@@ -170,10 +168,14 @@ public class View {
 					return;
 				}
 				deleteStar();
-				localUserData = (UserData) selection.getFirstElement();
-				nameInput.setText(localUserData.getName());
-				groupInput.setText(localUserData.getGroup());
-				checkButton.setSelection(localUserData.isTaskDone());
+				try {
+					localUserData = (UserData) ((UserDataImpl) selection.getFirstElement()).clone();
+					nameInput.setText(localUserData.getName());
+					groupInput.setText(localUserData.getGroup());
+					checkButton.setSelection(localUserData.isTaskDone());
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
 			}
 		};
 	}
@@ -191,93 +193,6 @@ public class View {
 		createListeners();
 	}
 
-//	public static void main(String[] args) {
-//		  Display display = new Display();
-//		    Shell shell = new Shell(display);
-//		    GridLayout layout = new GridLayout();
-//		    layout.numColumns = 4;
-//		    layout.makeColumnsEqualWidth = true;
-//		    shell.setLayout(layout);
-//
-//		    // Create the big button in the upper left
-//		    GridData data = new GridData(GridData.FILL_BOTH);
-//		    data.widthHint = 110;
-//		    
-//		  
-////		    
-////		    Button one = new Button(shell, SWT.PUSH);
-////		    one.setText("one");
-////		    one.setLayoutData(data);
-//
-//		    // Create a composite to hold the three buttons in the upper right
-////		    Composite composite = new Composite(shell, SWT.NONE);
-////		    data = new GridData(GridData.FILL_BOTH);
-////		    data.horizontalSpan = 2;
-////		    composite.setLayoutData(data);
-////		    layout = new GridLayout();
-////		    layout.numColumns = 1;
-////		    layout.marginHeight = 15;
-////		    composite.setLayout(layout);//////
-//
-//		    Composite compositeLabTex = new Composite(shell, SWT.NONE);
-////		    data = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-////		    compositeLabTex.setLayoutData(data);
-//		    layout = new GridLayout();
-//		    layout.numColumns = 2;
-//		    layout.marginHeight = 50;
-//		    compositeLabTex.setLayout(layout);//my
-//		    
-//		    Label nameLabel = new Label(compositeLabTex, SWT.NONE);//my
-//		    nameLabel.setText("sss");
-//		    
-//		    
-//		    
-//		    // Create button "two"
-////		    data = new GridData(GridData.FILL_BOTH);
-////		    Button two = new Button(composite, SWT.PUSH);
-////		    two.setText("two");
-////		    two.setLayoutData(data);
-//		    
-//		    
-//		    Text nameText = new Text(compositeLabTex, SWT.BORDER);//my
-//		    data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		    nameText.setLayoutData(data);//my
-//		    
-//		    
-//		    // Create button "three"
-////		    data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-////		    Button three = new Button(composite, SWT.PUSH);
-////		    three.setText("three");
-////		    three.setLayoutData(data);
-////		    
-//		    
-//
-//		    // Create button "four"
-////		    data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-////		    Button four = new Button(composite, SWT.PUSH);
-////		    four.setText("four");
-////		    four.setLayoutData(data);
-//
-//		    // Create the long button across the bottom
-////		    data = new GridData();
-////		    data.horizontalAlignment = GridData.FILL;
-////		    data.grabExcessHorizontalSpace = true;
-////		    data.horizontalSpan = 3;
-////		    data.heightHint = 150;
-////		    Button five = new Button(shell, SWT.PUSH);
-////		    five.setText("five");
-////		    five.setLayoutData(data);
-//
-//		    shell.pack();
-//		    shell.open();
-//		    while (!shell.isDisposed()) {
-//		      if (!display.readAndDispatch()) {
-//		        display.sleep();
-//		      }
-//		    }
-//		    display.dispose();
-//	}
-
 	private void createInputComponents(Composite inputComposite) {
 
 		nameInput = new Text(inputComposite, SWT.BORDER);
@@ -287,6 +202,7 @@ public class View {
 		formNameInput.bottom = new FormAttachment(0, 55);
 		nameInput.setText("Volodymyr");
 		nameInput.setLayoutData(formNameInput);
+		localUserData = new UserDataImpl();
 
 		groupInput = new Text(inputComposite, SWT.BORDER);
 		FormData formGroupInput = new FormData();
@@ -373,23 +289,24 @@ public class View {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (getNameInput().getText() != "" && getGroupInput().getText() != "") {
-					saveConsumer.accept(newUser());
-					deleteStar();
-				} else {
-					createErrorSaveMessage(arg0.widget.getDisplay().getActiveShell());
-				}
-				getTableViewer().setInput(userSupplier.get());
+				save();
 			}
-
 		});
 	}
-	
-	public UserData newUser () {
-		return new UserDataImpl(getNameInput().getText(), getGroupInput().getText(),
-				getCheckButton().getSelection());
+		
+	public void save() {
+		if (getNameInput().getText() != "" && getGroupInput().getText() != "") {
+			localUserData.setName(getNameInput().getText());
+			localUserData.setGroup(getGroupInput().getText());
+			localUserData.setTaskDone(checkButton.getSelection());
+			saveConsumer.accept(localUserData);
+			deleteStar();
+			localUserData = new UserDataImpl();
+		} else {
+			createErrorSaveMessage(this.saveButton.getShell());
+		}
+		getTableViewer().setInput(userSupplier.get());
 	}
-	
 
 	private void createErrorSaveMessage(Shell activeShell) {
 		String[] button = { IDialogConstants.OK_LABEL };
@@ -415,7 +332,7 @@ public class View {
 			public void widgetSelected(SelectionEvent arg0) {
 				setStar();
 				setEmptyInput();
-				localUserData = null;
+				localUserData = new UserDataImpl();
 			}
 		});
 	}

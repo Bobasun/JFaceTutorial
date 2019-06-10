@@ -24,15 +24,20 @@ public class UserServiceListImpl implements UserService {
 	}
 
 	@Override
-	public void addUser(UserData user) {
-		long id = user.getId();
-		users.put(id, user);
+	public void add(UserData user) {
+		if (!users.containsValue(user)) {
+		 users.put(user.getId(), user);
+		}
 	}
 
 	@Override
 	public void update(UserData user) {
-		long id = user.getId();
-		users.put(id, user);
+//		if (!users.containsValue(user)) {
+			UserData userDataFromStore = users.get(user.getId());
+			userDataFromStore.setName(user.getName());
+			userDataFromStore.setGroup(user.getGroup());
+			userDataFromStore.setTaskDone(user.isTaskDone());
+//		}
 	}
 
 	@Override
