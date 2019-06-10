@@ -2,20 +2,20 @@ package com.jfacetutorial.modellayer;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public class UserDataImpl implements UserData{
+public class UserDataImpl implements UserData {
 
 	private long id;
 	private String name;
 	private String group;
 	private boolean taskDone;
-	
+
 	public UserDataImpl(String name, String group, boolean taskDone) {
 		this.name = name;
 		this.group = group;
 		this.taskDone = taskDone;
-		this.id = GenerateUtils.generateId(name,group,taskDone);
+		this.id = GenerateUtils.generateId(name, group, taskDone);
 	}
-	
+
 	public UserDataImpl(String both) {
 		String[] users = both.split("and");
 		this.id = Long.parseLong(users[0].trim());
@@ -23,7 +23,7 @@ public class UserDataImpl implements UserData{
 		this.group = users[2].trim();
 		this.taskDone = Boolean.valueOf(users[3].trim());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,8 +95,5 @@ public class UserDataImpl implements UserData{
 	public long getId() {
 		return id;
 	}
-	
-	
-	
 
 }

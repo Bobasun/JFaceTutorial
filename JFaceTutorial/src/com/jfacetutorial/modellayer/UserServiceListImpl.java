@@ -9,11 +9,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public class UserServiceListImpl implements UserService{
-		
+public class UserServiceListImpl implements UserService {
+
 	@JsonSerialize(keyUsing = UserDataSerializer.class)
 	private Map<Long, UserData> users;
-	
+
 	public UserServiceListImpl() {
 		users = new HashMap<>();
 	}
@@ -26,28 +26,28 @@ public class UserServiceListImpl implements UserService{
 	@Override
 	public void addUser(UserData user) {
 		long id = user.getId();
-		users.put(id, user);		
+		users.put(id, user);
 	}
 
 	@Override
 	public void update(UserData user) {
 		long id = user.getId();
-			users.put(id, user);	
+		users.put(id, user);
 	}
 
 	@Override
 	public void delete(long id) {
-		users.remove((Long)id);
+		users.remove((Long) id);
 	}
 
 	@Override
 	public UserData getUserById(long id) {
 		return users.get(id);
 	}
-	
+
 	@Override
-	public void setAllUsers (Map<Long,UserData> map) {
+	public void setAllUsers(Map<Long, UserData> map) {
 		this.users = map;
 	}
-	
+
 }

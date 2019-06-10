@@ -11,7 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Table;
 
 public abstract class ColumnViewerComparator extends ViewerComparator {
-	
+
 	public static final int ASC = 1;
 	public static final int NONE = 0;
 	public static final int DESC = -1;
@@ -70,6 +70,7 @@ public abstract class ColumnViewerComparator extends ViewerComparator {
 
 		}
 	}
+
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		return direction * doCompare(viewer, e1, e2);

@@ -41,9 +41,8 @@ import com.jfacetutorial.UserContentProvider;
 import com.jfacetutorial.modellayer.UserData;
 import com.jfacetutorial.modellayer.UserDataImpl;
 
-
 public class View {
-	
+
 	private Table table;
 	private Text groupInput;
 	private Text nameInput;
@@ -56,23 +55,22 @@ public class View {
 	private UserData localUserData;
 	private Label groupLabel;
 	private Label nameLabel;
-	public Consumer<UserData> saveConsumer; 
-	public Supplier<Map<Long,UserData>> userSupplier;
+	public Consumer<UserData> saveConsumer;
+	public Supplier<Map<Long, UserData>> userSupplier;
 	private Consumer<Long> deleteConsumer;
-	
-	
+
 	public View() {
 	}
-	
+
 	public Composite createWidgets(Composite parent) {
-		Composite mainComposite = new Composite(parent,SWT.NONE);
+		Composite mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayout(new FillLayout());
 		SashForm sashForm = createSashForm(mainComposite);
 		tableViewer = createTableViewer(sashForm);
 		createInputComposite(sashForm);
 		return mainComposite;
 	}
-	
+
 	private SashForm createSashForm(Composite mainComposite) {
 		SashForm sashForm = new SashForm(mainComposite, SWT.NONE);
 		sashForm.setTouchEnabled(true);
@@ -80,8 +78,8 @@ public class View {
 	}
 
 	private TableViewer createTableViewer(SashForm sashForm) {
-		TableViewer tableViewer = new TableViewer(sashForm, SWT.MULTI | SWT.H_SCROLL
-	            | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		TableViewer tableViewer = new TableViewer(sashForm,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tableViewer.setUseHashlookup(true);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
@@ -111,7 +109,7 @@ public class View {
 				return user.getName();
 			}
 		});
-		createNameComparator(tableViewer,nameColuumn);		
+		createNameComparator(tableViewer, nameColuumn);
 	}
 
 	private void createNameComparator(TableViewer tableViewer, TableViewerColumn nameColuumn) {
@@ -122,23 +120,23 @@ public class View {
 				UserData user2 = (UserData) e2;
 				return user1.getName().compareToIgnoreCase(user2.getName());
 			}
-		};		
+		};
 	}
-	
+
 	private void createGroupColumn(TableViewer tableViewer) {
 		TableViewerColumn groupColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		groupColumn.getColumn().setWidth(100);
 		groupColumn.getColumn().setText("Group");
 		groupColumn.getColumn().setAlignment(SWT.CENTER);
 		groupColumn.setLabelProvider(new ColumnLabelProvider() {
-			
+
 			@Override
 			public String getText(Object element) {
 				UserData user = (UserData) element;
 				return user.getGroup();
 			}
 		});
-		createGroupComparator(tableViewer,groupColumn);
+		createGroupComparator(tableViewer, groupColumn);
 	}
 
 	private void createGroupComparator(TableViewer tableViewer, TableViewerColumn groupColumn) {
@@ -150,7 +148,7 @@ public class View {
 				UserData user2 = (UserData) e2;
 				return user1.getGroup().compareToIgnoreCase(user2.getGroup());
 			}
-		};				
+		};
 	}
 
 	private void createCheckColumn(TableViewer tableViewer) {
@@ -158,16 +156,16 @@ public class View {
 		checkColumn.getColumn().setWidth(50);
 		checkColumn.getColumn().setText("SWT");
 		checkColumn.getColumn().setAlignment(SWT.CENTER);
-		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());				
+		checkColumn.setLabelProvider(new ResourceUsingLabelProvider());
 	}
-	
+
 	private ISelectionChangedListener createTableViewListener() {
 		return new ISelectionChangedListener() {
-			
+
 			@Override
 			public void selectionChanged(SelectionChangedEvent arg0) {
 				IStructuredSelection selection = (IStructuredSelection) arg0.getSelection();
-				if(selection.getFirstElement() == null) {
+				if (selection.getFirstElement() == null) {
 					setEmptyInput();
 					return;
 				}
@@ -179,18 +177,18 @@ public class View {
 			}
 		};
 	}
-	
+
 	private void setEmptyInput() {
 		nameInput.setText("");
 		groupInput.setText("");
-		checkButton.setSelection(false);				
+		checkButton.setSelection(false);
 	}
-	
+
 	private void createInputComposite(SashForm sashForm) {
 		Composite inputComposite = new Composite(sashForm, SWT.NONE);
 		inputComposite.setLayout(new FormLayout());
 		createInputComponents(inputComposite);
-		createListeners();		
+		createListeners();
 	}
 
 //	public static void main(String[] args) {
@@ -279,9 +277,9 @@ public class View {
 //		    }
 //		    display.dispose();
 //	}
-	
+
 	private void createInputComponents(Composite inputComposite) {
-		    
+
 		nameInput = new Text(inputComposite, SWT.BORDER);
 		FormData formNameInput = new FormData();
 		formNameInput.right = new FormAttachment(100, -33);
@@ -289,7 +287,7 @@ public class View {
 		formNameInput.bottom = new FormAttachment(0, 55);
 		nameInput.setText("Volodymyr");
 		nameInput.setLayoutData(formNameInput);
-		
+
 		groupInput = new Text(inputComposite, SWT.BORDER);
 		FormData formGroupInput = new FormData();
 		formGroupInput.top = new FormAttachment(nameInput, 18);
@@ -297,7 +295,7 @@ public class View {
 		formGroupInput.left = new FormAttachment(nameInput, 0, SWT.LEFT);
 		groupInput.setLayoutData(formGroupInput);
 		groupInput.setText("15");
-		
+
 		checkButton = new Button(inputComposite, SWT.CHECK | SWT.CENTER);
 		formGroupInput.bottom = new FormAttachment(checkButton, -58);
 		checkButton.setAlignment(SWT.LEFT);
@@ -307,14 +305,14 @@ public class View {
 		formCheckButton.left = new FormAttachment(0, 91);
 		checkButton.setLayoutData(formCheckButton);
 		checkButton.setText("SWT task done");
-		
+
 		newButton = new Button(inputComposite, SWT.NONE);
 		FormData formNewButton = new FormData();
 		formNewButton.left = new FormAttachment(0, 10);
 		formNewButton.bottom = new FormAttachment(100, -24);
 		newButton.setLayoutData(formNewButton);
 		newButton.setText("New");
-		
+
 		saveButton = new Button(inputComposite, SWT.NONE);
 		formNewButton.right = new FormAttachment(saveButton, -6);
 		formCheckButton.bottom = new FormAttachment(saveButton, -39);
@@ -323,7 +321,7 @@ public class View {
 		formSaveButton.bottom = new FormAttachment(100, -24);
 		saveButton.setLayoutData(formSaveButton);
 		saveButton.setText("Save");
-		
+
 		deleteButton = new Button(inputComposite, SWT.NONE);
 		FormData formDeleteButton = new FormData();
 		formDeleteButton.right = new FormAttachment(100);
@@ -331,7 +329,7 @@ public class View {
 		formDeleteButton.bottom = new FormAttachment(100, -24);
 		deleteButton.setLayoutData(formDeleteButton);
 		deleteButton.setText("Delete");
-		
+
 		cancelButton = new Button(inputComposite, SWT.NONE);
 		formSaveButton.right = new FormAttachment(cancelButton, -6);
 		formDeleteButton.left = new FormAttachment(0, 246);
@@ -342,7 +340,7 @@ public class View {
 		formCancelButton.left = new FormAttachment(0, 162);
 		cancelButton.setLayoutData(formCancelButton);
 		cancelButton.setText("Cancel");
-		
+
 		nameLabel = new Label(inputComposite, SWT.NONE);
 		formNameInput.left = new FormAttachment(nameLabel, 50);
 		nameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
@@ -351,7 +349,7 @@ public class View {
 		formNameLabel.top = new FormAttachment(nameInput, -2, SWT.TOP);
 		nameLabel.setLayoutData(formNameLabel);
 		nameLabel.setText("Name   ");
-		
+
 		groupLabel = new Label(inputComposite, SWT.NONE);
 		groupLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 		FormData formGroupLabel = new FormData();
@@ -360,9 +358,9 @@ public class View {
 		formGroupLabel.left = new FormAttachment(nameLabel, 0, SWT.LEFT);
 		formGroupLabel.right = new FormAttachment(groupInput, -2);
 		groupLabel.setLayoutData(formGroupLabel);
-		groupLabel.setText("Group");		
+		groupLabel.setText("Group");
 	}
-	
+
 	private void createListeners() {
 		createSaveButtonListener();
 		createNewButtonListener();
@@ -370,48 +368,46 @@ public class View {
 		createDeleteButtonListener();
 	}
 
-
 	private void createSaveButtonListener() {
 		saveButton.addSelectionListener(new SelectionAdapter() {
-		
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if(getNameInput().getText() != "" 
-						&& getGroupInput().getText() != "") {
-				
-				saveConsumer.accept(new UserDataImpl(getNameInput().getText(),getGroupInput().getText(), 
-						  getCheckButton().getSelection()));
-					
-				deleteStar();
+				if (getNameInput().getText() != "" && getGroupInput().getText() != "") {
+
+					saveConsumer.accept(new UserDataImpl(getNameInput().getText(), getGroupInput().getText(),
+							getCheckButton().getSelection()));
+
+					deleteStar();
 				} else {
 					createErrorSaveMessage(arg0.widget.getDisplay().getActiveShell());
 				}
 				getTableViewer().setInput(userSupplier.get());
 			}
-		
-		});		
+
+		});
 	}
 
 	private void createErrorSaveMessage(Shell activeShell) {
 		String[] button = { IDialogConstants.OK_LABEL };
-		MessageDialog message = new MessageDialog(activeShell, "Error", null, 
-				"Please, fill all fields with a star!!!", MessageDialog.ERROR, button, 0);
-		message.open();		
+		MessageDialog message = new MessageDialog(activeShell, "Error", null, "Please, fill all fields with a star!!!",
+				MessageDialog.ERROR, button, 0);
+		message.open();
 	}
-	
+
 	private void deleteStar() {
-		 getNameLabel().setText("Name");
-		 getGroupLabel().setText("Group");				
+		getNameLabel().setText("Name");
+		getGroupLabel().setText("Group");
 	}
-	
+
 	private void setStar() {
 		getNameLabel().setText("Name *");
-		getGroupLabel().setText("Group *");	
+		getGroupLabel().setText("Group *");
 	}
-	
+
 	private void createNewButtonListener() {
 		newButton.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				setStar();
@@ -420,7 +416,7 @@ public class View {
 			}
 		});
 	}
-	
+
 	private void createCancelButtonListener() {
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 
@@ -431,13 +427,13 @@ public class View {
 			}
 		});
 	}
-	
+
 	private void createDeleteButtonListener() {
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(localUserData == null) {
+				if (localUserData == null) {
 					createErrorDeleteMessage(e.display.getActiveShell());
 					return;
 				}
@@ -447,31 +443,34 @@ public class View {
 			}
 		});
 	}
-	
+
 	private void createErrorDeleteMessage(Shell activeShell) {
 		String[] buttons = { IDialogConstants.OK_LABEL };
-		MessageDialog message = new MessageDialog(activeShell, "Error", null, 
+		MessageDialog message = new MessageDialog(activeShell, "Error", null,
 				"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
-		message.open();				
+		message.open();
 	}
-	
+
 	public Button getDeleteButton() {
 		return deleteButton;
 	}
+
 	public Button getSaveButton() {
 		return saveButton;
 	}
-	
+
 	public Text getGroupInput() {
 		return groupInput;
 	}
+
 	public Text getNameInput() {
 		return nameInput;
 	}
-	
+
 	public Button getCheckButton() {
 		return checkButton;
 	}
+
 	public Button getNewButton() {
 		return newButton;
 	}
@@ -479,15 +478,15 @@ public class View {
 	public Button getCancelButton() {
 		return cancelButton;
 	}
-	
+
 	public Table getTable() {
 		return table;
 	}
-	
+
 	public TableViewer getTableViewer() {
 		return tableViewer;
 	}
-	
+
 	public UserData getLocalUserData() {
 		return localUserData;
 	}
@@ -505,16 +504,15 @@ public class View {
 	}
 
 	public void addSaveAction(Consumer<UserData> consumer) {
-			this.saveConsumer = consumer;
+		this.saveConsumer = consumer;
 	}
 
-	public void addAllUser(Supplier<Map <Long,UserData>> supplier) {
+	public void addAllUser(Supplier<Map<Long, UserData>> supplier) {
 		this.userSupplier = supplier;
 	}
 
 	public void addDeleteAction(Consumer<Long> consumer) {
 		this.deleteConsumer = consumer;
 	}
-	
-	
+
 }

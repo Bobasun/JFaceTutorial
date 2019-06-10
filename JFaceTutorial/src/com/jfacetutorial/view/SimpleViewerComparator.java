@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 
 import com.jfacetutorial.modellayer.UserData;
 
-public class SimpleViewerComparator extends ViewerComparator{
+public class SimpleViewerComparator extends ViewerComparator {
 	private int direction = SWT.UP;
 
 	@Override
@@ -28,5 +28,5 @@ public class SimpleViewerComparator extends ViewerComparator{
 		}
 		return direction;
 	}
-		
+
 }
