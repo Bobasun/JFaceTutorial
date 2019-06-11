@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -169,10 +171,19 @@ public class View {
 				}
 				deleteStar();
 				try {
-					localUserData = (UserData) ((UserDataImpl) selection.getFirstElement()).clone();
-					nameInput.setText(localUserData.getName());
-					groupInput.setText(localUserData.getGroup());
-					checkButton.setSelection(localUserData.isTaskDone());
+					localUserData = null;
+					UserData userDataTmp = (UserData) ((UserDataImpl) selection.getFirstElement()).clone();
+					nameInput.setText(userDataTmp.getName());
+					groupInput.setText(userDataTmp.getGroup());
+					checkButton.setSelection(userDataTmp.isTaskDone());
+
+					nameInput.setEditable(true);
+					groupInput.setEditable(true);
+					checkButton.setEnabled(true);
+					deleteButton.setEnabled(true);
+
+					localUserData = userDataTmp;
+
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
@@ -200,9 +211,7 @@ public class View {
 		formNameInput.right = new FormAttachment(100, -33);
 		formNameInput.top = new FormAttachment(0, 34);
 		formNameInput.bottom = new FormAttachment(0, 55);
-		nameInput.setText("Volodymyr");
 		nameInput.setLayoutData(formNameInput);
-		localUserData = new UserDataImpl();
 
 		groupInput = new Text(inputComposite, SWT.BORDER);
 		FormData formGroupInput = new FormData();
@@ -210,7 +219,6 @@ public class View {
 		formGroupInput.right = new FormAttachment(nameInput, 0, SWT.RIGHT);
 		formGroupInput.left = new FormAttachment(nameInput, 0, SWT.LEFT);
 		groupInput.setLayoutData(formGroupInput);
-		groupInput.setText("15");
 
 		checkButton = new Button(inputComposite, SWT.CHECK | SWT.CENTER);
 		formGroupInput.bottom = new FormAttachment(checkButton, -58);
@@ -275,13 +283,59 @@ public class View {
 		formGroupLabel.right = new FormAttachment(groupInput, -2);
 		groupLabel.setLayoutData(formGroupLabel);
 		groupLabel.setText("Group");
+
+		disableButton();
+
+	}
+
+	private void disableButton() {
+		nameInput.setEditable(false);
+		groupInput.setEditable(false);
+		checkButton.setEnabled(false);
+		saveButton.setEnabled(false);
+		cancelButton.setEnabled(false);
+		deleteButton.setEnabled(false);
 	}
 
 	private void createListeners() {
+		createInputListeners();
 		createSaveButtonListener();
 		createNewButtonListener();
 		createCancelButtonListener();
 		createDeleteButtonListener();
+	}
+
+	private void createInputListeners() {
+		nameInput.addModifyListener(setInputListener());
+		groupInput.addModifyListener(setInputListener());
+		checkButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				saveButton.setEnabled(true);
+				cancelButton.setEnabled(true);
+			}
+
+		});
+	}
+
+	private ModifyListener setInputListener() {
+		return new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				if (localUserData != null) {
+					saveButton.setEnabled(true);
+					cancelButton.setEnabled(true);
+
+				}
+				if (getNameInput().getText() == "" || getGroupInput().getText() == "") {
+					saveButton.setEnabled(false);
+					cancelButton.setEnabled(false);
+				}
+
+			}
+		};
 	}
 
 	private void createSaveButtonListener() {
@@ -293,26 +347,20 @@ public class View {
 			}
 		});
 	}
-		
+
 	public void save() {
-		if (getNameInput().getText() != "" && getGroupInput().getText() != "") {
+		if (getNameInput().getText() != "" && getGroupInput().getText() != "" && localUserData != null) {
 			localUserData.setName(getNameInput().getText());
 			localUserData.setGroup(getGroupInput().getText());
 			localUserData.setTaskDone(checkButton.getSelection());
 			saveConsumer.accept(localUserData);
 			deleteStar();
-			localUserData = new UserDataImpl();
-		} else {
-			createErrorSaveMessage(this.saveButton.getShell());
+			disableButton();
+			setEmptyInput();
+			localUserData = null;
+
 		}
 		getTableViewer().setInput(userSupplier.get());
-	}
-
-	private void createErrorSaveMessage(Shell activeShell) {
-		String[] button = { IDialogConstants.OK_LABEL };
-		MessageDialog message = new MessageDialog(activeShell, "Error", null, "Please, fill all fields with a star!!!",
-				MessageDialog.ERROR, button, 0);
-		message.open();
 	}
 
 	private void deleteStar() {
@@ -332,6 +380,10 @@ public class View {
 			public void widgetSelected(SelectionEvent arg0) {
 				setStar();
 				setEmptyInput();
+				saveButton.setEnabled(false);
+				nameInput.setEditable(true);
+				groupInput.setEditable(true);
+				checkButton.setEnabled(true);
 				localUserData = new UserDataImpl();
 			}
 		});
@@ -353,22 +405,13 @@ public class View {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (localUserData == null) {
-					createErrorDeleteMessage(e.display.getActiveShell());
-					return;
-				}
+
 				deleteConsumer.accept(localUserData.getId());
 				setStar();
+				deleteButton.setEnabled(false);
 				getTableViewer().setInput(userSupplier.get());
 			}
 		});
-	}
-
-	private void createErrorDeleteMessage(Shell activeShell) {
-		String[] buttons = { IDialogConstants.OK_LABEL };
-		MessageDialog message = new MessageDialog(activeShell, "Error", null,
-				"Please, select or add item before delete:)", MessageDialog.ERROR, buttons, 0);
-		message.open();
 	}
 
 	public Button getDeleteButton() {

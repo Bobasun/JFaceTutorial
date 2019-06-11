@@ -28,7 +28,6 @@ public class TopMenu extends MenuManager {
 	private MenuManager mainMenu;
 	private Supplier<Map<Long, UserData>> userSupplier;
 	private Consumer<Map<Long, UserData>> userConsumer;
-//	private Supplier<TableViewer> tableSupplier;
 	private View view;
 
 	public TopMenu(Shell shell, View view) {
@@ -170,9 +169,6 @@ public class TopMenu extends MenuManager {
 		this.userConsumer = consumer;
 	}
 
-//	public void addTableViewer(Supplier<TableViewer> supplier) {
-//		this.tableSupplier = supplier;
-//	}
 
 
 

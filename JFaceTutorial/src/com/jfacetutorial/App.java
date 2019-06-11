@@ -39,7 +39,7 @@ public class App extends ApplicationWindow {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = view.createWidgets(parent);
-		controller = new Controller(view);
+		controller = new Controller();
 		createReferences();
 	    return composite;
 	}
